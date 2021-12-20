@@ -18,13 +18,37 @@ public class Main extends JFrame implements KeyListener {
     private AsciiPanel terminal;
     private Screen screen;
 
-    public Main() {
+    public Main(String[] args) {
         super();
+        // System.out.println(args[0]+args[1]);
         terminal = new AsciiPanel(World.WIDTH, World.HEIGHT, AsciiFont.Guybrush_square_16x16); 
         add(terminal);
         pack();
-        screen = new WorldScreen();
-        screen.rulesScreen();
+        if(args.length == 0){//没有参数，默认单人游戏
+            System.out.println("Standalone game");
+            screen = new WorldScreen(false,false,null);
+            screen.rulesScreen();
+        }
+        else if(args.length == 2){ //demo模式
+            if(args[0].equals("-demo")){
+                System.out.println("Replaying demo");
+                screen = new WorldScreen(false,true,args[1]);
+                screen.rulesScreen();
+            }
+            else if(args[0].equals("-online")){
+                System.out.println("Online game,args:"+args[0]+" "+args[1]);
+                screen = new WorldScreen(true,false,args[1]);
+                screen.rulesScreen();
+            }
+            else{
+                System.out.println("Wrong arguments!");
+                System.exit(-1);
+            }
+        }
+        else{
+            System.out.println("Wrong arguments!");
+            System.exit(-1);
+        }
         Thread t = new Thread(new RefreshScreen(this,screen));
         addKeyListener(this);
         t.start();  
@@ -54,7 +78,7 @@ public class Main extends JFrame implements KeyListener {
     }
 
     public static void main(String[] args) {
-        Main app = new Main();
+        Main app = new Main(args);
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setVisible(true);
     }

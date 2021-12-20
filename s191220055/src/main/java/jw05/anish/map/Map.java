@@ -24,7 +24,7 @@ public class Map {
     World world;
 
     public Map(World world) {
-        this.mapFile = (new File("")).getAbsolutePath() + "\\s191220055\\src\\main\\java\\jw05\\anish\\map\\map1.txt";
+        this.mapFile = (new File("")).getAbsolutePath() + "\\src\\main\\java\\jw05\\anish\\map\\map1.txt";
         this.map = new int[mapSize][mapSize];// 0为可行，1为玩家、炮弹、或者敌人，其余为地图元素
         lock = new ReentrantLock(); // 可重入锁，防止冲突
         this.world = world;// 每次一修改地图的状态，马上对world修改，防止出现问题

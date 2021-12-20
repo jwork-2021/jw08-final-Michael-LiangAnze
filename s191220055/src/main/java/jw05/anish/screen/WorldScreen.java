@@ -28,7 +28,7 @@ public class WorldScreen implements Screen {
     private ArrayList<Creature>creatureList;
     private ExecutorService exec;
 
-    public WorldScreen() {
+    public WorldScreen(boolean isOnline,boolean isDemo,String info) {
         world = new World();
         world.setWorldState(0);
     }
