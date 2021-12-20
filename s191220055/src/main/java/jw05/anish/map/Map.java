@@ -18,18 +18,21 @@ import jw05.anish.calabashbros.World;
 public class Map {
     private int[][] map;
     private final int mapSize = 40;
-    String mapFile;
+    private String mapFile;
     private Lock lock = null;
     private ArrayList<Creature> creatureList;
     World world;
 
     public Map(World world) {
-        this.mapFile = (new File("")).getAbsolutePath() + "\\src\\main\\java\\jw05\\anish\\map\\map1.txt";
+        this.mapFile = (new File("")).getAbsolutePath() + "\\s191220055\\src\\main\\java\\jw05\\anish\\map\\map1.txt";
         this.map = new int[mapSize][mapSize];// 0为可行，1为玩家、炮弹、或者敌人，其余为地图元素
         lock = new ReentrantLock(); // 可重入锁，防止冲突
         this.world = world;// 每次一修改地图的状态，马上对world修改，防止出现问题
     }
 
+    public String getMapFile(){
+        return this.mapFile;
+    }
     public void setCreatureList(ArrayList<Creature> creatureList) {
         this.creatureList = creatureList;
     }
@@ -109,6 +112,7 @@ public class Map {
                         creatureList.get(i).beAttack(1);
                         if (creatureList.get(i).getHp() <= 0) { // 被攻击生物死亡
                             cleanBlock(tempPos); // 清理格子
+                            map[tempPos.first][tempPos.second] = 0;//清空坐标
                             index = i;
                         }
                         break;
@@ -147,6 +151,7 @@ public class Map {
                             creatureList.get(i).beAttack(1);
                             if (creatureList.get(i).getHp() <= 0) {
                                 cleanBlock(tempPos);
+                                map[tempPos.first][tempPos.second] = 0;//清空坐标
                                 index = i;
                             }
                             break;

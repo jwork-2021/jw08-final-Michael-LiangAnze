@@ -37,6 +37,7 @@ public class WorldScreen implements Screen {
         try {
             map = new Map(world);
             map.loadMap();
+            System.out.println(map.getMapFile());
             int mapSize = map.getMapSize();
             int[][] tempMap = new int[mapSize][mapSize];
             map.getMapState(tempMap);
