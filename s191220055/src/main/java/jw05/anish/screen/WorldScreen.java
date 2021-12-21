@@ -133,21 +133,21 @@ public class WorldScreen implements Screen {
         // 创建人物和道具
         player = new Player(new Color(0, 245, 255), 1, 500, 4, world, map, cannonballList);
 
-        // Shooter shooter1 = new Shooter(1, 100, 1, world, map, player, cannonballList,
-        // 18, 1, 27, 10);
-        // Shooter shooter2 = new Shooter(1, 100, 1, world, map, player, cannonballList,
-        // 30, 8, 37, 10);
-        // Shooter shooter3 = new Shooter(1, 100, 1, world, map, player, cannonballList,
-        // 27, 18, 37, 21);
+        Shooter shooter1 = new Shooter(1, 100, 1, world, map, player, cannonballList,
+        18, 1, 27, 10);
+        Shooter shooter2 = new Shooter(1, 100, 1, world, map, player, cannonballList,
+        30, 8, 37, 10);
+        Shooter shooter3 = new Shooter(1, 100, 1, world, map, player, cannonballList,
+        27, 18, 37, 21);
 
-        // SworksMan sworksMan1 = new SworksMan(1, 150, 8,1, 2, world,
-        // map,player,2,2,17,11);
-        // SworksMan sworksMan2 = new SworksMan(1, 150, 8,1, 2, world,
-        // map,player,31,1,38,6);
-        // SworksMan sworksMan3 = new SworksMan(1, 150, 9,1, 2, world,
-        // map,player,1,23,16,37);
-        // SworksMan sworksMan4 = new SworksMan(1, 150, 8,1, 2, world,
-        // map,player,24,24,36,37);
+        SworksMan sworksMan1 = new SworksMan(1, 150, 8,1, 2, world,
+        map,player,2,2,17,11);
+        SworksMan sworksMan2 = new SworksMan(1, 150, 8,1, 2, world,
+        map,player,31,1,38,6);
+        SworksMan sworksMan3 = new SworksMan(1, 150, 9,1, 2, world,
+        map,player,1,23,16,37);
+        SworksMan sworksMan4 = new SworksMan(1, 150, 8,1, 2, world,
+        map,player,24,24,36,37);
 
         Reward reward1 = new Reward(new Color(255, 222, 173), 224, world);
         Reward reward2 = new Reward(new Color(0, 191, 255), 173, world);
@@ -159,26 +159,26 @@ public class WorldScreen implements Screen {
         // 将生物添加到队列中
         creatureList.add(player);
 
-        // creatureList.add(shooter1);
-        // creatureList.add(shooter2);
-        // creatureList.add(shooter3);
+        creatureList.add(shooter1);
+        creatureList.add(shooter2);
+        creatureList.add(shooter3);
 
-        // creatureList.add(sworksMan1);
-        // creatureList.add(sworksMan2);
-        // creatureList.add(sworksMan3);
-        // creatureList.add(sworksMan4);
+        creatureList.add(sworksMan1);
+        creatureList.add(sworksMan2);
+        creatureList.add(sworksMan3);
+        creatureList.add(sworksMan4);
 
         // 为生物分配id
         player.setId(assignId());
 
-        // shooter1.setId(assignId());
-        // shooter2.setId(assignId());
-        // shooter3.setId(assignId());
+        shooter1.setId(assignId());
+        shooter2.setId(assignId());
+        shooter3.setId(assignId());
 
-        // sworksMan1.setId(assignId());
-        // sworksMan2.setId(assignId());
-        // sworksMan3.setId(assignId());
-        // sworksMan4.setId(assignId());
+        sworksMan1.setId(assignId());
+        sworksMan2.setId(assignId());
+        sworksMan3.setId(assignId());
+        sworksMan4.setId(assignId());
 
         // 创建位置
         Tuple<Integer, Integer> playerPos = new Tuple<Integer, Integer>(20, 20);
@@ -200,36 +200,36 @@ public class WorldScreen implements Screen {
         Tuple<Integer, Integer> reward6Pos = new Tuple<Integer, Integer>(18, 18);
 
         // 设置地图及世界,是否需要和上一部分互换位置？
-        map.setThing(playerPos, 1, player, false, false);
+        map.setThing(playerPos, 1, player, false);
 
-        // map.setThing(shooter1Pos, 1,shooter1,false,false);
-        // map.setThing(shooter2Pos, 1,shooter2,false,false);
-        // map.setThing(shooter3Pos, 1,shooter3,false,false);
+        map.setThing(shooter1Pos, 1,shooter1,false);
+        map.setThing(shooter2Pos, 1,shooter2,false);
+        map.setThing(shooter3Pos, 1,shooter3,false);
 
-        // map.setThing(sworksMan1Pos, 1,sworksMan1,false,false);
-        // map.setThing(sworksMan2Pos, 1,sworksMan2,false,false);
-        // map.setThing(sworksMan3Pos, 1,sworksMan3,false,false);
-        // map.setThing(sworksMan4Pos, 1,sworksMan4,false,false);
+        map.setThing(sworksMan1Pos, 1,sworksMan1,false);
+        map.setThing(sworksMan2Pos, 1,sworksMan2,false);
+        map.setThing(sworksMan3Pos, 1,sworksMan3,false);
+        map.setThing(sworksMan4Pos, 1,sworksMan4,false);
 
-        map.setThing(reward1Pos, 99, reward1, false, false);
-        map.setThing(reward2Pos, 99, reward2, false, false);
-        map.setThing(reward3Pos, 99, reward3, false, false);
-        map.setThing(reward4Pos, 99, reward4, false, false);
-        map.setThing(reward5Pos, 99, reward5, false, false);
-        map.setThing(reward6Pos, 99, reward6, false, false);
+        map.setThing(reward1Pos, 99, reward1, false);
+        map.setThing(reward2Pos, 99, reward2, false);
+        map.setThing(reward3Pos, 99, reward3, false);
+        map.setThing(reward4Pos, 99, reward4, false);
+        map.setThing(reward5Pos, 99, reward5, false);
+        map.setThing(reward6Pos, 99, reward6, false);
 
         // 设置并启动线程
         exec = Executors.newCachedThreadPool();
         exec.execute(new Thread(player));
         exec.execute(new Thread(cannonballList));
-        // exec.execute(new Thread(shooter1));
-        // exec.execute(new Thread(shooter2));
-        // exec.execute(new Thread(shooter3));
+        exec.execute(new Thread(shooter1));
+        exec.execute(new Thread(shooter2));
+        exec.execute(new Thread(shooter3));
 
-        // exec.execute(new Thread(sworksMan1));
-        // exec.execute(new Thread(sworksMan2));
-        // exec.execute(new Thread(sworksMan3));
-        // exec.execute(new Thread(sworksMan4));
+        exec.execute(new Thread(sworksMan1));
+        exec.execute(new Thread(sworksMan2));
+        exec.execute(new Thread(sworksMan3));
+        exec.execute(new Thread(sworksMan4));
     }
 
     @Override

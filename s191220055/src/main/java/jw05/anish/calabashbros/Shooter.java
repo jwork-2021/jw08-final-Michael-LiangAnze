@@ -34,6 +34,8 @@ public class Shooter extends Creature implements Runnable {
         this.cd = 1;
         cannonDamage = cannonballList.getDamage();
         setArea(x1, y1, x2, y2);
+
+        this.type = "monster";
     }
 
     public void setArea(int x1, int y1, int x2, int y2) {

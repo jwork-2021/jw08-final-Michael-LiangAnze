@@ -15,6 +15,18 @@ public class Thing {
         return this.id;
     }
 
+    String type;//monster，player,cannonball
+
+    public void setType(String s){
+        if(s.equals("monster") || s.equals("player")){
+            type = s;
+        }
+    }
+
+    public String getType(){
+        return type;
+    }
+
     protected World world;
 
     public Tile<? extends Thing> tile;

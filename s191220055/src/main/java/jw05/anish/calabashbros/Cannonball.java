@@ -9,6 +9,7 @@ public class Cannonball extends Thing {
     public Cannonball(int direction, int damage, World world) {
         super(Color.red, (char) 249, world);
         this.direction = direction;
+        this.type = "cannonball";
     }
 
     public int getDirection(){

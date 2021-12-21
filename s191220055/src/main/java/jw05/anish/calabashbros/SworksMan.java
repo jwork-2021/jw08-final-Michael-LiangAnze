@@ -35,6 +35,8 @@ public class SworksMan extends Creature implements Runnable {
         this.damage = damage;
         this.sleepTime = 1000 / speed * 50;
         setArea(x1, y1, x2, y2);
+
+        this.type = "monster";
     }
 
     public void setArea(int x1, int y1, int x2, int y2) {

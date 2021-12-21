@@ -12,6 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import jw05.anish.algorithm.Tuple;
 import jw05.anish.calabashbros.Creature;
 import jw05.anish.calabashbros.Floor;
+import jw05.anish.calabashbros.Player;
 import jw05.anish.calabashbros.Thing;
 import jw05.anish.calabashbros.World;
 
@@ -108,7 +109,7 @@ public class Map {
             map[destPos.first][destPos.second] = temp;
             world.swapPos(beginPos, destPos);
             res = true;
-        } else { // 位置上可能有生物
+        } else { // 该位置不可移动
             if (isCannonball) { // 该物体为炮弹
                 map[beginPos.first][beginPos.second] = 0; // 将炮弹位置清空
                 cleanBlock(beginPos); // 将炮弹位置清空
@@ -134,51 +135,66 @@ public class Map {
                     recoreder.saveRecord();
                 }
             }
+            else if(world.get(beginPos.first, beginPos.second).getType().equals("player")){// 该物体为玩家，判断玩家移动的目标位置是否有奖励，有则移动并获奖 
+                System.out.println("moving a blocked polayer");
+                if(map[destPos.first][destPos.second] == 99){ // 是奖励
+                    //首先清空位置
+                    map[destPos.first][destPos.second] = 0;
+                    world.put(new Floor(world), destPos);
+                    //然后移动玩家
+                    int temp = map[beginPos.first][beginPos.second];
+                    map[beginPos.first][beginPos.second] = map[destPos.first][destPos.second];
+                    map[destPos.first][destPos.second] = temp;
+                    world.swapPos(beginPos, destPos);
+                    //然后对玩家更新信息
+                    Player p;
+                    Tuple<Integer, Integer> tempPos;
+                    for(int i = 0; i < creatureList.size(); ++i){
+                        tempPos = creatureList.get(i).getPos();
+                        if (beginPos.first == tempPos.first && beginPos.second == tempPos.second) {
+                            p = (Player)creatureList.get(i);
+                            p.getReward();
+                            break;
+                        }
+                    }
+                }
+            }
             res = false;
         }
-
         lock.unlock();
         return res;
     }
 
-    public synchronized boolean setThing(Tuple<Integer, Integer> pos, int type, Thing t, boolean isForced,
-            Boolean isCannonball) {
-        // 参数isForced用于表示是否强制设定，当玩家吃到奖励时，需要强制将该位置清空
+    public synchronized boolean setThing(Tuple<Integer, Integer> pos, int type, Thing t, Boolean isCannonball) {
         boolean res = false;
         lock.lock();
-        if (!isForced) { // 非强制，炮弹也是
-            if (map[pos.first][pos.second] == 0) { // 位置为空
-                map[pos.first][pos.second] = type;
-                world.put(t, pos);
-                res = true;
-            } else { // 位置不为空
-                int index = -1;
-                if (isCannonball) {
-                    Tuple<Integer, Integer> tempPos;
-                    for (int i = 0; i < creatureList.size(); ++i) {
-                        tempPos = creatureList.get(i).getPos();
-                        if (pos.first == tempPos.first && pos.second == tempPos.second) {
-                            creatureList.get(i).beAttack(1);
-                            if (creatureList.get(i).getHp() <= 0) {
-                                cleanBlock(tempPos);
-                                map[tempPos.first][tempPos.second] = 0;// 清空坐标
-                                index = i;
-                            }
-                            break;
-                        }
-                    }
-                    if (index != -1) {
-                        creatureList.remove(index);
-                    }
-                    // if (creatureList.size() == 1) {
-                    // world.setWorldState(2);
-                    // }
-                }
-            }
-        } else { // 强制将该位置设为某一物体
+        if (map[pos.first][pos.second] == 0) { // 位置为空
             map[pos.first][pos.second] = type;
             world.put(t, pos);
             res = true;
+        } else { // 位置不为空
+            int index = -1;
+            if (isCannonball) {
+                Tuple<Integer, Integer> tempPos;
+                for (int i = 0; i < creatureList.size(); ++i) {
+                    tempPos = creatureList.get(i).getPos();
+                    if (pos.first == tempPos.first && pos.second == tempPos.second) {
+                        creatureList.get(i).beAttack(1);
+                        if (creatureList.get(i).getHp() <= 0) {
+                            cleanBlock(tempPos);
+                            map[tempPos.first][tempPos.second] = 0;// 清空坐标
+                            index = i;
+                        }
+                        break;
+                    }
+                }
+                if (index != -1) {
+                    creatureList.remove(index);
+                }
+                // if (creatureList.size() == 1) {
+                // world.setWorldState(2);
+                // }
+            }
         }
         // 记录信息并输出
         recoreder.AddInfo(t.getId(), isCannonball, true, pos, null, res ? idCount++ : -1,(int)t.getGlyph(),t.getColor());

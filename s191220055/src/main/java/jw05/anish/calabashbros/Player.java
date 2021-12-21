@@ -33,6 +33,8 @@ public class Player extends Creature implements Runnable {
         mapSize = map.getMapSize();
         this.mapList = new int[mapSize][mapSize];
         attackState = false;
+
+        this.type = "player";
     }
 
     public void setAttackState() {
@@ -82,51 +84,10 @@ public class Player extends Creature implements Runnable {
         world.setPlayerInfo(hp, score);
     }
 
-    public void tryToGetReward(Tuple<Integer, Integer> pos, int direction) {
-        boolean isReward = false;
-        switch (direction) {
-            case 1:
-                if (mapList[pos.first][pos.second + 1] == 99) {
-                    isReward = true;
-                    map.setThing(new Tuple<Integer, Integer>(pos.first, pos.second + 1), 0, new Floor(world), true,
-                            false);
-                } else {
-                    isReward = false;
-                }
-                break;
-            case 2:
-                if (mapList[pos.first][pos.second - 1] == 99) {
-                    isReward = true;
-                    map.setThing(new Tuple<Integer, Integer>(pos.first, pos.second - 1), 0, new Floor(world), true,
-                            false);
-                } else {
-                    isReward = false;
-                }
-                break;
-            case 3:
-                if (mapList[pos.first - 1][pos.second] == 99) {
-                    isReward = true;
-                    map.setThing(new Tuple<Integer, Integer>(pos.first - 1, pos.second), 0, new Floor(world), true,
-                            false);
-                } else {
-                    isReward = false;
-                }
-                break;
-            case 4:
-                if (mapList[pos.first + 1][pos.second] == 99) {
-                    isReward = true;
-                    map.setThing(new Tuple<Integer, Integer>(pos.first + 1, pos.second), 0, new Floor(world), true,
-                            false);
-                } else {
-                    isReward = false;
-                }
-                break;
-        }
-        if (isReward) {
-            this.hp++;
-            this.score++;
-            world.setPlayerInfo(hp, score);
-        }
+    public void getReward(){
+        this.hp++;
+        this.score++;
+        world.setPlayerInfo(hp, score);
     }
 
     @Override
@@ -148,9 +109,7 @@ public class Player extends Creature implements Runnable {
                 attackState = false;
             }
             if (direction != 0) {
-                if (!moveTo(direction)) {
-                    tryToGetReward(pos, direction);
-                }
+                moveTo(direction);
             }
             if (cd == 0) {
                 cd = 5;

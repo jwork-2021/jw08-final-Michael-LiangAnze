@@ -53,7 +53,7 @@ public class MapUpdateRecorder {
                                 Thing t = new Thing(color,glyph,world);
                                 //判断是否为炮弹
                                 Boolean isCannonball = lineInfo[2].equals("true")?true:false;
-                                map.setThing(pos, type, t, false, isCannonball);
+                                map.setThing(pos, type, t, isCannonball);
                             };break;
                             case "moveThing":{
                                 
