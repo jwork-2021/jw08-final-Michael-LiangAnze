@@ -21,6 +21,8 @@ public interface Screen {
 
     public int getScreenState();
 
+    public void demoScreen();
+    
     public ExecutorService getThreadPool();
     
 }

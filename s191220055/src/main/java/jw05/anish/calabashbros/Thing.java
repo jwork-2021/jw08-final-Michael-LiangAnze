@@ -5,6 +5,16 @@ import jw05.anish.algorithm.Tuple;
 
 public class Thing {
 
+    int id = -1;// 物体应当具备id，默认为-1
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId(){
+        return this.id;
+    }
+
     protected World world;
 
     public Tile<? extends Thing> tile;

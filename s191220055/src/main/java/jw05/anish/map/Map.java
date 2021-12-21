@@ -22,17 +22,21 @@ public class Map {
     private Lock lock = null;
     private ArrayList<Creature> creatureList;
     World world;
+    int idCount = 100; // 避开冲突
+    MapUpdateRecorder recoreder;
 
     public Map(World world) {
         this.mapFile = (new File("")).getAbsolutePath() + "\\src\\main\\java\\jw05\\anish\\map\\map1.txt";
         this.map = new int[mapSize][mapSize];// 0为可行，1为玩家、炮弹、或者敌人，其余为地图元素
         lock = new ReentrantLock(); // 可重入锁，防止冲突
         this.world = world;// 每次一修改地图的状态，马上对world修改，防止出现问题
+        recoreder = new MapUpdateRecorder();
     }
 
-    public String getMapFile(){
+    public String getMapFile() {
         return this.mapFile;
     }
+
     public void setCreatureList(ArrayList<Creature> creatureList) {
         this.creatureList = creatureList;
     }
@@ -92,6 +96,10 @@ public class Map {
 
     public synchronized boolean moveThing(Tuple<Integer, Integer> beginPos, Tuple<Integer, Integer> destPos,
             Boolean isCannonball) {
+
+        recoreder.AddInfo(world.get(beginPos.first, beginPos.second).getId(), isCannonball, false, beginPos, destPos,
+                -1);
+
         boolean res = false;
         lock.lock();
         if (map[destPos.first][destPos.second] == 0) {// 允许移动
@@ -112,7 +120,7 @@ public class Map {
                         creatureList.get(i).beAttack(1);
                         if (creatureList.get(i).getHp() <= 0) { // 被攻击生物死亡
                             cleanBlock(tempPos); // 清理格子
-                            map[tempPos.first][tempPos.second] = 0;//清空坐标
+                            map[tempPos.first][tempPos.second] = 0;// 清空坐标
                             index = i;
                         }
                         break;
@@ -123,10 +131,12 @@ public class Map {
                 }
                 if (creatureList.size() == 1) {
                     world.setWorldState(2);
+                    recoreder.saveRecord();
                 }
             }
             res = false;
         }
+
         lock.unlock();
         return res;
     }
@@ -151,7 +161,7 @@ public class Map {
                             creatureList.get(i).beAttack(1);
                             if (creatureList.get(i).getHp() <= 0) {
                                 cleanBlock(tempPos);
-                                map[tempPos.first][tempPos.second] = 0;//清空坐标
+                                map[tempPos.first][tempPos.second] = 0;// 清空坐标
                                 index = i;
                             }
                             break;
@@ -160,9 +170,9 @@ public class Map {
                     if (index != -1) {
                         creatureList.remove(index);
                     }
-                    if (creatureList.size() == 1) {
-                        world.setWorldState(2);
-                    }
+                    // if (creatureList.size() == 1) {
+                    // world.setWorldState(2);
+                    // }
                 }
             }
         } else { // 强制将该位置设为某一物体
@@ -170,7 +180,8 @@ public class Map {
             world.put(t, pos);
             res = true;
         }
-
+        // 记录信息并输出
+        recoreder.AddInfo(t.getId(), isCannonball, true, pos, null, res ? idCount++ : -1,(int)t.getGlyph(),t.getColor());
         lock.unlock();
         return res;
     }

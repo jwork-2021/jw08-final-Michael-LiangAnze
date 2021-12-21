@@ -20,20 +20,20 @@ public class Main extends JFrame implements KeyListener {
 
     public Main(String[] args) {
         super();
-        // System.out.println(args[0]+args[1]);
+        //for debug
+        String[]myargs = {"-demo","demo-1640004623333.txt"};//
         terminal = new AsciiPanel(World.WIDTH, World.HEIGHT, AsciiFont.Guybrush_square_16x16); 
         add(terminal);
         pack();
-        if(args.length == 0){//没有参数，默认单人游戏
+        if(myargs.length == 0){//没有参数，默认单人游戏
             System.out.println("Standalone game");
             screen = new WorldScreen(false,false,null);
             screen.rulesScreen();
         }
-        else if(args.length == 2){ //demo模式
-            if(args[0].equals("-demo")){
+        else if(myargs.length == 2){ //demo模式
+            if(myargs[0].equals("-demo")){
                 System.out.println("Replaying demo");
-                screen = new WorldScreen(false,true,args[1]);
-                screen.rulesScreen();
+                screen = new WorldScreen(false,true,myargs[1]);
             }
             else if(args[0].equals("-online")){
                 System.out.println("Online game,args:"+args[0]+" "+args[1]);
