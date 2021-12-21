@@ -26,7 +26,7 @@ public class CannonballList implements Runnable {
     public void addCannonball(Tuple<Integer, Integer> cannonPos, int direction) {
         lock.lock();
         Cannonball temp = new Cannonball(direction, damage, world);
-        if (map.setThing(cannonPos, 1, temp, true)) {
+        if (map.setThing(cannonPos, 1, temp)) {
             cannonballList.add(temp);
         }
         lock.unlock();
@@ -45,25 +45,25 @@ public class CannonballList implements Runnable {
             pos = c.getPos();
             switch (c.getDirection()) {
                 case 1: {
-                    if (!map.moveThing(pos, new Tuple<Integer, Integer>(pos.first, pos.second + 1), true)) {// 失败，和玩家一个格子
+                    if (!map.moveThing(pos, new Tuple<Integer, Integer>(pos.first, pos.second + 1))) {// 失败，和玩家一个格子
                         removeList.add(c);
                     }
                 }
                     break;
                 case 2: {
-                    if (!map.moveThing(pos, new Tuple<Integer, Integer>(pos.first, pos.second - 1), true)) {
+                    if (!map.moveThing(pos, new Tuple<Integer, Integer>(pos.first, pos.second - 1))) {
                         removeList.add(c);
                     }
                 }
                     break;
                 case 3: {
-                    if (!map.moveThing(pos, new Tuple<Integer, Integer>(pos.first - 1, pos.second), true)) {
+                    if (!map.moveThing(pos, new Tuple<Integer, Integer>(pos.first - 1, pos.second))) {
                         removeList.add(c);
                     }
                 }
                     break;
                 case 4: {
-                    if (!map.moveThing(pos, new Tuple<Integer, Integer>(pos.first + 1, pos.second), true)) {
+                    if (!map.moveThing(pos, new Tuple<Integer, Integer>(pos.first + 1, pos.second))) {
                         removeList.add(c);
                     }
                 }

@@ -1,0 +1,48 @@
+setThing -1 player 20,20 100 14 0,245,255
+setThing -1 shooter 24,6 101 1 162,45,95
+setThing -1 reward 6,6 102 224 255,222,173
+setThing -1 reward 37,2 103 173 0,191,255
+setThing -1 reward 31,14 104 224 255,222,173
+setThing -1 reward 6,34 105 224 255,222,173
+setThing -1 reward 31,31 106 224 255,222,173
+setThing -1 reward 18,18 107 173 0,191,255
+moveThing -1 shooter 24,6 24,7 
+moveThing -1 shooter 24,7 24,8 
+moveThing -1 player 20,20 20,19 
+moveThing -1 shooter 24,8 25,8 
+moveThing -1 player 20,19 20,18 
+moveThing -1 player 20,18 20,17 
+moveThing -1 shooter 25,8 24,8 
+moveThing -1 player 20,17 21,17 
+moveThing -1 player 21,17 22,17 
+moveThing -1 player 22,17 23,17 
+moveThing -1 shooter 24,8 25,8 
+moveThing -1 shooter 25,8 25,9 
+moveThing -1 player 23,17 23,16 
+moveThing -1 player 23,16 23,15 
+moveThing -1 shooter 25,9 24,9 
+moveThing -1 player 23,15 24,15 
+setThing -1 cannonball 24,10 108 249 255,0,0
+moveThing -1 cannonball 24,10 24,11 
+moveThing -1 cannonball 24,11 24,12 
+moveThing -1 cannonball 24,12 24,13 
+moveThing -1 cannonball 24,13 24,14 
+moveThing -1 cannonball 24,14 24,15 
+setThing -1 cannonball 24,10 109 249 255,0,0
+moveThing -1 cannonball 24,10 24,11 
+moveThing -1 cannonball 24,11 24,12 
+moveThing -1 cannonball 24,12 24,13 
+moveThing -1 cannonball 24,13 24,14 
+moveThing -1 cannonball 24,14 24,15 
+setThing -1 cannonball 24,10 110 249 255,0,0
+moveThing -1 cannonball 24,10 24,11 
+moveThing -1 cannonball 24,11 24,12 
+moveThing -1 cannonball 24,12 24,13 
+moveThing -1 cannonball 24,13 24,14 
+moveThing -1 cannonball 24,14 24,15 
+setThing -1 cannonball 24,10 111 249 255,0,0
+moveThing -1 cannonball 24,10 24,11 
+moveThing -1 cannonball 24,11 24,12 
+moveThing -1 cannonball 24,12 24,13 
+moveThing -1 cannonball 24,13 24,14 
+moveThing -1 cannonball 24,14 24,15 

@@ -1,6 +1,7 @@
 package jw05.anish.calabashbros;
 
 import jw05.anish.algorithm.Tuple;
+
 public class Tile<T extends Thing> {
 
     private T thing;

@@ -32,10 +32,12 @@ public class Shooter extends Creature implements Runnable {
         random = new Random();
         this.sleepTime = 1000 / speed * 50;
         this.cd = 1;
-        cannonDamage = cannonballList.getDamage();
+        if(cannonballList != null){
+            cannonDamage = cannonballList.getDamage();
+        }   
         setArea(x1, y1, x2, y2);
 
-        this.type = "monster";
+        this.type = "shooter";
     }
 
     public void setArea(int x1, int y1, int x2, int y2) {

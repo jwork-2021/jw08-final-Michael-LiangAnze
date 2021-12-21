@@ -15,7 +15,7 @@ public class Thing {
         return this.id;
     }
 
-    String type;//monster，player,cannonball
+    String type = "null";//monster，player,cannonball
 
     public void setType(String s){
         if(s.equals("monster") || s.equals("player")){

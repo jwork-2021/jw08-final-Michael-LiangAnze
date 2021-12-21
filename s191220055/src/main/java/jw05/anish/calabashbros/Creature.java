@@ -13,10 +13,13 @@ public class Creature extends Thing {
     Creature(Color color, char glyph, World world) {
         super(color, glyph, world);
         speed = 100;
+        if(this.type == null){
+            this.type = "creature";
+        }
     }
 
     public boolean moveTo(Tuple<Integer, Integer> beginPos, Tuple<Integer, Integer> destPos) {
-        if (map.moveThing(beginPos, destPos, false)) { // 检查当前状态是否可以前往，如果可以就移动
+        if (map.moveThing(beginPos, destPos)) { // 检查当前状态是否可以前往，如果可以就移动
             return true;
         } else {
             // System.out.println("blocked!");

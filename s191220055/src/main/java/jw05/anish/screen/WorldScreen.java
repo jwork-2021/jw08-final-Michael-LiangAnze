@@ -200,23 +200,23 @@ public class WorldScreen implements Screen {
         Tuple<Integer, Integer> reward6Pos = new Tuple<Integer, Integer>(18, 18);
 
         // 设置地图及世界,是否需要和上一部分互换位置？
-        map.setThing(playerPos, 1, player, false);
+        map.setThing(playerPos, 1, player);
 
-        map.setThing(shooter1Pos, 1,shooter1,false);
-        map.setThing(shooter2Pos, 1,shooter2,false);
-        map.setThing(shooter3Pos, 1,shooter3,false);
+        map.setThing(shooter1Pos, 1,shooter1);
+        map.setThing(shooter2Pos, 1,shooter2);
+        map.setThing(shooter3Pos, 1,shooter3);
 
-        map.setThing(sworksMan1Pos, 1,sworksMan1,false);
-        map.setThing(sworksMan2Pos, 1,sworksMan2,false);
-        map.setThing(sworksMan3Pos, 1,sworksMan3,false);
-        map.setThing(sworksMan4Pos, 1,sworksMan4,false);
+        map.setThing(sworksMan1Pos, 1,sworksMan1);
+        map.setThing(sworksMan2Pos, 1,sworksMan2);
+        map.setThing(sworksMan3Pos, 1,sworksMan3);
+        map.setThing(sworksMan4Pos, 1,sworksMan4);
 
-        map.setThing(reward1Pos, 99, reward1, false);
-        map.setThing(reward2Pos, 99, reward2, false);
-        map.setThing(reward3Pos, 99, reward3, false);
-        map.setThing(reward4Pos, 99, reward4, false);
-        map.setThing(reward5Pos, 99, reward5, false);
-        map.setThing(reward6Pos, 99, reward6, false);
+        map.setThing(reward1Pos, 99, reward1);
+        map.setThing(reward2Pos, 99, reward2);
+        map.setThing(reward3Pos, 99, reward3);
+        map.setThing(reward4Pos, 99, reward4);
+        map.setThing(reward5Pos, 99, reward5);
+        map.setThing(reward6Pos, 99, reward6);
 
         // 设置并启动线程
         exec = Executors.newCachedThreadPool();

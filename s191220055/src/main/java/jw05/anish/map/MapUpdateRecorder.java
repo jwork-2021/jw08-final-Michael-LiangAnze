@@ -8,6 +8,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import jw05.anish.algorithm.Tuple;
+import jw05.anish.calabashbros.Cannonball;
+import jw05.anish.calabashbros.Creature;
+import jw05.anish.calabashbros.Player;
+import jw05.anish.calabashbros.Reward;
+import jw05.anish.calabashbros.Shooter;
+import jw05.anish.calabashbros.SworksMan;
 import jw05.anish.calabashbros.Thing;
 import jw05.anish.calabashbros.World;
 
@@ -23,6 +29,8 @@ public class MapUpdateRecorder {
     }
 
     public void playDemo(String demoFile,Map map,World world){
+        ArrayList<Creature> creatureList= new ArrayList<Creature>();
+        map.setCreatureList(creatureList);
         Runnable demoRunnable = new Runnable() {
             @Override
             public void run() {
@@ -49,17 +57,48 @@ public class MapUpdateRecorder {
                                 char glyph = (char)Integer.parseInt(lineInfo[5]);
                                 //获取设置后的新id
                                 int newId = Integer.parseInt(lineInfo[4]);
+                                
+                                
                                 // 创建物品
-                                Thing t = new Thing(color,glyph,world);
-                                //判断是否为炮弹
-                                Boolean isCannonball = lineInfo[2].equals("true")?true:false;
-                                map.setThing(pos, type, t, isCannonball);
+                                switch(lineInfo[2]){
+                                    case "player":{
+                                        Player player = new Player(color,0,100,4,world,map,null);
+                                        creatureList.add(player);
+                                        map.setThing(pos, type, player);
+                                    };break;
+                                    case "sworksMan":{
+                                        SworksMan sworksMan = new SworksMan(0,100,0,0,2,world,map,null,0,0,0,0);
+                                        creatureList.add(sworksMan);
+                                        map.setThing(pos, type, sworksMan);
+                                    };break;
+                                    case "shooter":{
+                                        Shooter shooter = new Shooter(0,100,1,world,map,null,null,0,0,0,0);
+                                        creatureList.add(shooter);
+                                        map.setThing(pos, type, shooter);
+                                    };break;
+                                    case "reward":{
+                                        Reward reward = new Reward(color,(int)glyph,world);
+                                        map.setThing(pos, type, reward);
+                                    };break;
+                                    case "cannonball":{
+                                        Cannonball cannonball = new Cannonball(0,0,world);
+                                        map.setThing(pos, type, cannonball);
+                                    };break;
+                                }
                             };break;
                             case "moveThing":{
-                                
+                                // // get id
+                                // int id = Integer.parseInt(lineInfo[1]);
+                                //get pos
+                                String[]beginPosInfo = lineInfo[3].split(",");
+                                String[]destPosInfo = lineInfo[4].split(",");
+                                Tuple<Integer,Integer> beginPos = new Tuple<Integer,Integer>(Integer.parseInt(beginPosInfo[0]),Integer.parseInt(beginPosInfo[1]));
+                                Tuple<Integer,Integer> destPos = new Tuple<Integer,Integer>(Integer.parseInt(destPosInfo[0]),Integer.parseInt(destPosInfo[1]));
+                                // move thing
+                                map.moveThing(beginPos, destPos);
                             };break;
                         }
-                        Thread.sleep(100);// 10 fps
+                        Thread.sleep(66);// 10 fps
                     }
                     reader.close();
                     System.out.println("finish playing demo");      
@@ -67,6 +106,8 @@ public class MapUpdateRecorder {
                     
                 } catch (Exception e) {
                     System.out.println("Fail to replay demo");
+                    e.printStackTrace();
+                    // System.out.println();
                 }    
             }
         };
@@ -76,14 +117,14 @@ public class MapUpdateRecorder {
     }
 
 
-    public void AddInfo(int id, boolean itemType, boolean moveOrSet, Tuple<Integer, Integer> beginPos,
+    public void AddInfo(int id, String itemType,String actionType, Tuple<Integer, Integer> beginPos,
             Tuple<Integer, Integer> destPos, int newIdAfterSet) {
-        infolist.add(new MapUpdateInfo(id, itemType, moveOrSet, beginPos, destPos, newIdAfterSet));
+        infolist.add(new MapUpdateInfo(id, itemType, actionType, beginPos, destPos, newIdAfterSet));
     }
 
-    public void AddInfo(int id, boolean itemType, boolean moveOrSet, Tuple<Integer, Integer> beginPos,
+    public void AddInfo(int id, String itemType, String actionType, Tuple<Integer, Integer> beginPos,
         Tuple<Integer, Integer> destPos, int newIdAfterSet, int glyph, Color color) {
-    infolist.add(new MapUpdateInfo(id, itemType, moveOrSet, beginPos, destPos, newIdAfterSet,glyph,color));
+    infolist.add(new MapUpdateInfo(id, itemType, actionType, beginPos, destPos, newIdAfterSet,glyph,color));
     }
 
     public void saveRecord(){

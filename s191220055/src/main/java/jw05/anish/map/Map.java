@@ -95,14 +95,11 @@ public class Map {
     // 1.炮弹刚好产生在目标所在的地方，目标立即收到伤害
     // 2.炮弹刚好移动到目标的位置，目标立即受到伤害
 
-    public synchronized boolean moveThing(Tuple<Integer, Integer> beginPos, Tuple<Integer, Integer> destPos,
-            Boolean isCannonball) {
-
-        recoreder.AddInfo(world.get(beginPos.first, beginPos.second).getId(), isCannonball, false, beginPos, destPos,
-                -1);
-
+    public synchronized boolean moveThing(Tuple<Integer, Integer> beginPos, Tuple<Integer, Integer> destPos) {
         boolean res = false;
         lock.lock();
+        String type = world.get(beginPos.first, beginPos.second).getType(); //获取移动物品的类型
+        recoreder.AddInfo(world.get(beginPos.first, beginPos.second).getId(), type, "moveThing", beginPos, destPos,-1);
         if (map[destPos.first][destPos.second] == 0) {// 允许移动
             int temp = map[beginPos.first][beginPos.second];
             map[beginPos.first][beginPos.second] = map[destPos.first][destPos.second];
@@ -110,7 +107,7 @@ public class Map {
             world.swapPos(beginPos, destPos);
             res = true;
         } else { // 该位置不可移动
-            if (isCannonball) { // 该物体为炮弹
+            if (type.equals("cannonball")) { // 该物体为炮弹
                 map[beginPos.first][beginPos.second] = 0; // 将炮弹位置清空
                 cleanBlock(beginPos); // 将炮弹位置清空
                 int index = -1;
@@ -134,25 +131,25 @@ public class Map {
                     world.setWorldState(2);
                     recoreder.saveRecord();
                 }
-            }
-            else if(world.get(beginPos.first, beginPos.second).getType().equals("player")){// 该物体为玩家，判断玩家移动的目标位置是否有奖励，有则移动并获奖 
-                System.out.println("moving a blocked polayer");
-                if(map[destPos.first][destPos.second] == 99){ // 是奖励
-                    //首先清空位置
+            } else if (type.equals("player")) {// 该物体为玩家，判断玩家移动的目标位置是否有奖励，有则移动并获奖
+                // System.out.println("moving a blocked polayer");
+                // if (map[destPos.first][destPos.second] == 99) { // 是奖励
+                if(world.get(destPos.first, destPos.second).getType().equals("reward")){// 是奖励
+                    // 首先清空位置
                     map[destPos.first][destPos.second] = 0;
                     world.put(new Floor(world), destPos);
-                    //然后移动玩家
+                    // 然后移动玩家
                     int temp = map[beginPos.first][beginPos.second];
                     map[beginPos.first][beginPos.second] = map[destPos.first][destPos.second];
                     map[destPos.first][destPos.second] = temp;
                     world.swapPos(beginPos, destPos);
-                    //然后对玩家更新信息
+                    // 然后对玩家更新信息
                     Player p;
                     Tuple<Integer, Integer> tempPos;
-                    for(int i = 0; i < creatureList.size(); ++i){
+                    for (int i = 0; i < creatureList.size(); ++i) {
                         tempPos = creatureList.get(i).getPos();
-                        if (beginPos.first == tempPos.first && beginPos.second == tempPos.second) {
-                            p = (Player)creatureList.get(i);
+                        if (destPos.first == tempPos.first && destPos.second == tempPos.second) {
+                            p = (Player) creatureList.get(i);
                             p.getReward();
                             break;
                         }
@@ -165,7 +162,7 @@ public class Map {
         return res;
     }
 
-    public synchronized boolean setThing(Tuple<Integer, Integer> pos, int type, Thing t, Boolean isCannonball) {
+    public synchronized boolean setThing(Tuple<Integer, Integer> pos, int type, Thing t) {
         boolean res = false;
         lock.lock();
         if (map[pos.first][pos.second] == 0) { // 位置为空
@@ -174,7 +171,7 @@ public class Map {
             res = true;
         } else { // 位置不为空
             int index = -1;
-            if (isCannonball) {
+            if (t.getType().equals("cannonball")) {
                 Tuple<Integer, Integer> tempPos;
                 for (int i = 0; i < creatureList.size(); ++i) {
                     tempPos = creatureList.get(i).getPos();
@@ -191,13 +188,15 @@ public class Map {
                 if (index != -1) {
                     creatureList.remove(index);
                 }
-                // if (creatureList.size() == 1) {
-                // world.setWorldState(2);
-                // }
+            }
+            if (creatureList.size() == 1) {
+                world.setWorldState(2);
+                recoreder.saveRecord();
             }
         }
         // 记录信息并输出
-        recoreder.AddInfo(t.getId(), isCannonball, true, pos, null, res ? idCount++ : -1,(int)t.getGlyph(),t.getColor());
+        recoreder.AddInfo(t.getId(), t.getType(), "setThing", pos, null, res ? idCount++ : -1, (int) t.getGlyph(),
+                t.getColor());
         lock.unlock();
         return res;
     }

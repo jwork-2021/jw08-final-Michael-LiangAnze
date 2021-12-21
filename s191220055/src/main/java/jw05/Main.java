@@ -21,7 +21,7 @@ public class Main extends JFrame implements KeyListener {
     public Main(String[] args) {
         super();
         //for debug
-        String[]myargs = {};//"-demo","demo-1640004623333.txt"
+        String[]myargs = {"-demo","demo-1640111968067.txt"};//
         terminal = new AsciiPanel(World.WIDTH, World.HEIGHT, AsciiFont.Guybrush_square_16x16); 
         add(terminal);
         pack();
@@ -30,7 +30,13 @@ public class Main extends JFrame implements KeyListener {
             screen = new WorldScreen(false,false,null);
             screen.rulesScreen();
         }
-        else if(myargs.length == 2){ //demo模式
+        // else if(myargs.length == 1){
+        //     if(myargs[0].equals("-record")){
+        //         System.out.println("Recording demo");
+        //         screen = new WorldScreen(false,true,myargs[1]);
+        //     }
+        // }
+        else if(myargs.length == 2){ //播放demo模式，或者在线模式
             if(myargs[0].equals("-demo")){
                 System.out.println("Replaying demo");
                 screen = new WorldScreen(false,true,myargs[1]);

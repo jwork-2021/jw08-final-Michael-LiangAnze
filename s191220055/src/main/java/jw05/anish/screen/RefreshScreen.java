@@ -16,18 +16,21 @@ public class RefreshScreen implements Runnable {
         int state = 0;
         while (true) {
             state = screen.getScreenState();
-            if(state == 5){ //播放demo完毕，4为正在播放
-                break;
+            if(state == 1){ //正在进行单人游戏
+                mainWindow.repaint();
             }
-            else if(state == 2){ //单人模式游戏结束
+            else if((state == 2 || state == 3) && screen.getThreadPool() != null){ //单人模式游戏结束，且不是demo模式
                 screen.getThreadPool().shutdown(); //关闭开启的线程
                 screen.gameOverScreen();
                 mainWindow.repaint();
                 break;
             }
-            else{
-                // System.out.println("refreshing");
+            else if(state == 4){ //正在播放demo
                 mainWindow.repaint();
+            }
+            else if(state == 5){ //demo播放完毕
+                mainWindow.repaint();
+                break;
             }
             try {
                 Thread.sleep(100);
