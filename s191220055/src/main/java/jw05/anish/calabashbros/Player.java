@@ -78,14 +78,6 @@ public class Player extends Creature implements Runnable {
     @Override
     public synchronized void beAttack(int damage) {
         this.hp -= damage;
-        if (this.hp <= 0) { // 死亡
-            if(world.getWorldState() == 1){ //单人模式
-                world.setWorldState(3);
-            }
-            else if(world.getWorldState() == 4){//demo
-                // world.setWorldState(5);
-            }
-        }
         world.setPlayerInfo(hp, score);
     }
 

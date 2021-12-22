@@ -1,0 +1,158 @@
+setThing -1 player 20,20 0 14 0,245,255
+setThing -1 shooter 24,6 1 1 162,45,95
+setThing -1 shooter 32,9 2 1 162,45,95
+setThing -1 shooter 33,19 3 1 162,45,95
+setThing -1 sworksMan 10,7 4 2 170,177,24
+setThing -1 sworksMan 33,3 5 2 170,177,24
+setThing -1 sworksMan 10,30 6 2 170,177,24
+setThing -1 sworksMan 31,30 7 2 170,177,24
+setThing -1 reward 6,6 8 224 255,222,173
+setThing -1 reward 37,2 9 173 0,191,255
+setThing -1 reward 31,14 10 224 255,222,173
+setThing -1 reward 6,34 11 224 255,222,173
+setThing -1 reward 31,31 12 224 255,222,173
+setThing -1 reward 18,18 13 173 0,191,255
+moveThing 3 shooter 33,19 34,19 
+moveThing 2 shooter 32,9 32,8 
+moveThing 1 shooter 24,6 23,6 
+moveThing 4 sworksMan 10,7 9,7 
+moveThing 5 sworksMan 33,3 34,3 
+moveThing 6 sworksMan 10,30 9,30 
+moveThing 7 sworksMan 31,30 32,30 
+moveThing 0 player 20,20 20,21 
+moveThing 4 sworksMan 9,7 10,7 
+moveThing 7 sworksMan 32,30 31,30 
+moveThing 6 sworksMan 9,30 10,30 
+moveThing 5 sworksMan 34,3 33,3 
+moveThing 0 player 20,21 20,22 
+moveThing 0 player 20,22 20,23 
+moveThing 3 shooter 34,19 33,19 
+moveThing 2 shooter 32,8 31,8 
+moveThing 1 shooter 23,6 23,5 
+moveThing 0 player 20,23 20,24 
+moveThing 7 sworksMan 31,30 31,31 
+moveThing 5 sworksMan 33,3 33,4 
+moveThing 7 sworksMan 31,30 31,31 
+moveThing 6 sworksMan 10,30 10,29 
+moveThing 7 sworksMan 31,30 31,31 
+moveThing 7 sworksMan 31,30 30,30 
+moveThing 4 sworksMan 10,7 11,7 
+moveThing 0 player 20,24 20,25 
+moveThing 0 player 20,25 20,26 
+moveThing 0 player 20,26 20,27 
+moveThing 5 sworksMan 33,4 32,4 
+moveThing 6 sworksMan 10,29 11,29 
+moveThing 7 sworksMan 30,30 31,30 
+moveThing 4 sworksMan 11,7 11,8 
+moveThing 0 player 20,27 20,28 
+moveThing 1 shooter 23,5 22,5 
+moveThing 2 shooter 31,8 30,8 
+moveThing 3 shooter 33,19 32,19 
+moveThing 5 sworksMan 32,4 32,5 
+moveThing 6 sworksMan 11,29 10,29 
+moveThing 4 sworksMan 11,8 12,8 
+moveThing 7 sworksMan 31,30 30,30 
+moveThing 0 player 20,28 19,28 
+moveThing 0 player 19,28 18,28 
+moveThing 3 shooter 32,19 33,19 
+moveThing 2 shooter 30,8 31,8 
+moveThing 1 shooter 22,5 22,4 
+moveThing 5 sworksMan 32,5 32,4 
+moveThing 6 sworksMan 10,29 10,28 
+moveThing 4 sworksMan 12,8 13,8 
+moveThing 7 sworksMan 30,30 30,31 
+moveThing 0 player 18,28 18,29 
+moveThing 0 player 18,29 18,30 
+moveThing 5 sworksMan 32,4 33,4 
+moveThing 6 sworksMan 10,28 10,29 
+moveThing 7 sworksMan 30,31 31,31 
+moveThing 4 sworksMan 13,8 13,7 
+moveThing 7 sworksMan 30,31 30,32 
+moveThing 0 player 18,30 17,30 
+moveThing 1 shooter 22,4 21,4 
+moveThing 2 shooter 31,8 32,8 
+moveThing 3 shooter 33,19 32,19 
+moveThing 0 player 17,30 16,30 
+moveThing 5 sworksMan 33,4 33,5 
+moveThing 6 sworksMan 10,29 11,29 
+moveThing 7 sworksMan 30,32 29,32 
+moveThing 4 sworksMan 13,7 13,8 
+moveThing 0 player 16,30 15,30 
+moveThing 5 sworksMan 33,5 32,5 
+moveThing 6 sworksMan 11,29 12,29 
+moveThing 4 sworksMan 13,8 13,9 
+moveThing 7 sworksMan 29,32 30,32 
+moveThing 1 shooter 21,4 21,5 
+moveThing 2 shooter 32,8 32,9 
+moveThing 3 shooter 32,19 31,19 
+moveThing 0 player 15,30 15,29 
+moveThing 0 player 15,29 15,28 
+moveThing 5 sworksMan 32,5 33,5 
+moveThing 6 sworksMan 12,29 13,29 
+moveThing 7 sworksMan 30,32 30,33 
+moveThing 4 sworksMan 13,9 13,8 
+moveThing 0 player 15,29 14,29 
+moveThing 1 shooter 21,5 21,6 
+moveThing 2 shooter 32,9 31,9 
+moveThing 3 shooter 31,19 31,20 
+moveThing 5 sworksMan 33,5 32,5 
+beAttacked 0
+moveThing 7 sworksMan 30,33 30,34 
+moveThing 4 sworksMan 13,8 13,7 
+moveThing 5 sworksMan 32,5 32,6 
+moveThing 7 sworksMan 30,34 30,33 
+moveThing 4 sworksMan 13,7 13,8 
+moveThing 1 shooter 21,6 22,6 
+moveThing 2 shooter 31,9 31,10 
+moveThing 3 shooter 31,20 31,21 
+moveThing 5 sworksMan 32,6 33,6 
+moveThing 4 sworksMan 13,8 13,9 
+moveThing 7 sworksMan 30,33 31,33 
+moveThing 5 sworksMan 33,6 32,6 
+moveThing 4 sworksMan 13,9 13,8 
+moveThing 7 sworksMan 31,33 30,33 
+moveThing 1 shooter 22,6 22,7 
+moveThing 2 shooter 31,10 30,10 
+moveThing 3 shooter 31,21 30,21 
+beAttacked 0
+moveThing 5 sworksMan 32,6 33,6 
+moveThing 7 sworksMan 30,33 30,34 
+moveThing 4 sworksMan 13,8 13,9 
+moveThing 3 shooter 30,21 29,21 
+moveThing 2 shooter 30,10 31,10 
+moveThing 1 shooter 22,7 22,6 
+moveThing 5 sworksMan 33,6 33,5 
+moveThing 7 sworksMan 30,34 29,34 
+moveThing 4 sworksMan 13,9 13,8 
+moveThing 5 sworksMan 33,5 32,5 
+moveThing 4 sworksMan 13,8 12,8 
+moveThing 7 sworksMan 29,34 28,34 
+moveThing 1 shooter 22,6 22,7 
+moveThing 2 shooter 31,10 32,10 
+moveThing 3 shooter 29,21 29,20 
+moveThing 5 sworksMan 32,5 33,5 
+moveThing 7 sworksMan 28,34 27,34 
+moveThing 4 sworksMan 12,8 13,8 
+beAttacked 0
+moveThing 5 sworksMan 33,5 33,4 
+moveThing 7 sworksMan 27,34 27,33 
+moveThing 4 sworksMan 13,8 13,9 
+moveThing 3 shooter 29,20 30,20 
+moveThing 1 shooter 22,7 22,6 
+moveThing 2 shooter 32,10 32,9 
+moveThing 5 sworksMan 33,4 33,3 
+moveThing 4 sworksMan 13,9 13,8 
+moveThing 7 sworksMan 27,33 26,33 
+moveThing 2 shooter 32,9 32,10 
+moveThing 3 shooter 30,20 30,19 
+moveThing 1 shooter 22,6 22,7 
+moveThing 5 sworksMan 33,3 33,4 
+moveThing 7 sworksMan 26,33 26,32 
+moveThing 4 sworksMan 13,8 13,9 
+moveThing 5 sworksMan 33,4 32,4 
+moveThing 4 sworksMan 13,9 13,8 
+moveThing 7 sworksMan 26,32 26,31 
+moveThing 2 shooter 32,10 32,9 
+moveThing 1 shooter 22,7 21,7 
+moveThing 3 shooter 30,19 31,19 
+beAttacked 0

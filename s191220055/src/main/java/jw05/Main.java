@@ -21,40 +21,13 @@ public class Main extends JFrame implements KeyListener {
     public Main(String[] args) {
         super();
         //for debug
-        String[]myargs = {"-demo","demo-1640144277465.txt"};//
+        // String[]myargs = {"-record"};
+        String[]myargs = {"-demo","demo-1640168085000.txt"};
+        // String[]myargs = {};
         terminal = new AsciiPanel(World.WIDTH, World.HEIGHT, AsciiFont.Guybrush_square_16x16); 
         add(terminal);
         pack();
-        if(myargs.length == 0){//没有参数，默认单人游戏
-            System.out.println("Standalone game");
-            screen = new WorldScreen(false,false,null);
-            screen.rulesScreen();
-        }
-        // else if(myargs.length == 1){
-        //     if(myargs[0].equals("-record")){
-        //         System.out.println("Recording demo");
-        //         screen = new WorldScreen(false,true,myargs[1]);
-        //     }
-        // }
-        else if(myargs.length == 2){ //播放demo模式，或者在线模式
-            if(myargs[0].equals("-demo")){
-                System.out.println("Replaying demo");
-                screen = new WorldScreen(false,true,myargs[1]);
-            }
-            else if(args[0].equals("-online")){
-                System.out.println("Online game,args:"+args[0]+" "+args[1]);
-                screen = new WorldScreen(true,false,args[1]);
-                screen.rulesScreen();
-            }
-            else{
-                System.out.println("Wrong arguments!");
-                System.exit(-1);
-            }
-        }
-        else{
-            System.out.println("Wrong arguments!");
-            System.exit(-1);
-        }
+        screen = new WorldScreen(myargs);
         Thread t = new Thread(new RefreshScreen(this,screen));
         addKeyListener(this);
         t.start();  

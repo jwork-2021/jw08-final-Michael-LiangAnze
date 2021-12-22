@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.swing.text.html.HTMLDocument.BlockElement;
+
 import jw05.anish.calabashbros.Player;
 import jw05.anish.calabashbros.Shooter;
 import jw05.anish.calabashbros.SworksMan;
@@ -30,26 +32,79 @@ public class WorldScreen implements Screen {
     private CannonballList cannonballList;
     private ArrayList<Creature> creatureList;
     private ExecutorService exec;
-    private String ipOrDemoFile;
+    
+    private boolean isOnline = false;
+    private boolean isRecord = false;
+    private boolean ifPlayDemo = false;
+    private String ip = null;
+    private String demoFile = null;
 
-    public WorldScreen(boolean isOnline, boolean isDemo, String ipOrDemoFile) {
-        System.out.println("get args:" + isOnline + " " + isDemo + " " + ipOrDemoFile);
-        this.ipOrDemoFile = ipOrDemoFile;
+    public WorldScreen(String[]args) { //接受传入的参数
+        // 对传入的参数进行解析
+        parseArgs(args);
+        
+        //其余参数初始化
         world = new World();
-        if (isDemo) { // 播放demo
-            demoScreen();
-        } else if (!isOnline) { // 单人模式
+
+        if(args.length == 0){//没有参数，默认单人游戏
+            System.out.println("Standalone game");
             world.setWorldState(0);
-        } else { // 多人模式
+            rulesScreen();
+        }
+        else if(!ifPlayDemo && isRecord && !isOnline){ //录制单人游戏
+            System.out.println("Standalone game with record");
+            world.setWorldState(0);
+            rulesScreen();
+        }
+        else if(ifPlayDemo){ //播放demo
+            System.out.println("Replaying demo");
+            demoScreen();
+        }
+        else{
+            System.out.println("Wrong arguments!");
             System.exit(-1);
         }
     }
 
-    private void loadMapFile() {
+    private void parseArgs(String[]args){
+        // for(String s:args){
+        //     if(s.substring(0, 1).equals("-")){
+        //         s = s.toLowerCase();
+        //     }
+        // }
+        // 是否为在线游戏
+        for(int i = 0;i < args.length;++i){
+            if(args[i].equals("-online") && i != args.length - 1){ // 在线模式
+                this.isOnline = true;
+                this.ip = args[i + 1];
+                break;
+            }
+        }//是否录制
+        for(String temp:args){
+            if(temp.equals("-record")){
+                this.isRecord = true;
+                break;
+            }
+        }
+        //是否播放demo
+        for(int i = 0;i < args.length;++i){
+            if(args[i].equals("-demo") && i != args.length - 1){ 
+                this.ifPlayDemo = true;
+                this.demoFile = args[i + 1];
+                break;
+            }
+        }
+        // 处理矛盾情况
+        if(ifPlayDemo && isRecord){
+            isRecord = false;
+        }
+    }
+    private void loadMapFile(boolean isRecord) {
         try {
-            map = new Map(world);
+            map = new Map(world,isRecord);
+            // System.out.println(isRecord);
             map.loadMap();
-            // System.out.println(map.getMapFile());
+            
             int mapSize = map.getMapSize();
             int[][] tempMap = new int[mapSize][mapSize];
             map.getMapState(tempMap);
@@ -118,7 +173,7 @@ public class WorldScreen implements Screen {
     @Override
     public void gamingScreen() {
         world.setGamingWorld();
-        loadMapFile();
+        loadMapFile(isRecord);
         creatureList = new ArrayList<Creature>();
         map.setCreatureList(creatureList);
         cannonballList = new CannonballList(1, 300, map, world);
@@ -222,9 +277,9 @@ public class WorldScreen implements Screen {
     public void demoScreen() {
         world.setWorldState(4);
         world.setGamingWorld();
-        loadMapFile();
+        loadMapFile(false);
         MapUpdateRecorder mur = new MapUpdateRecorder();
-        mur.playDemo(this.ipOrDemoFile, this.map,this.world);
+        mur.playDemo(this.demoFile, this.map,this.world);
     }
 
     @Override
