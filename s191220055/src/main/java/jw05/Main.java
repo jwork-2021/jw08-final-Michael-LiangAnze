@@ -21,7 +21,7 @@ public class Main extends JFrame implements KeyListener {
     public Main(String[] args) {
         super();
         //for debug
-        String[]myargs = {"-demo","demo-1640111968067.txt"};//
+        String[]myargs = {"-demo","demo-1640144277465.txt"};//
         terminal = new AsciiPanel(World.WIDTH, World.HEIGHT, AsciiFont.Guybrush_square_16x16); 
         add(terminal);
         pack();

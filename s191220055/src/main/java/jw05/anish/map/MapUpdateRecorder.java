@@ -6,10 +6,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import jw05.anish.algorithm.Tuple;
 import jw05.anish.calabashbros.Cannonball;
 import jw05.anish.calabashbros.Creature;
+import jw05.anish.calabashbros.Floor;
 import jw05.anish.calabashbros.Player;
 import jw05.anish.calabashbros.Reward;
 import jw05.anish.calabashbros.Shooter;
@@ -21,11 +24,13 @@ import java.awt.Color;
 public class MapUpdateRecorder {
     String demoFile;
     ArrayList<MapUpdateInfo> infolist;
+    private Lock lock = null;
 
     public MapUpdateRecorder() {
         long time = System.currentTimeMillis();
         demoFile = "demo-" + String.valueOf(time) + ".txt";
         infolist = new ArrayList<MapUpdateInfo>();
+        lock = new ReentrantLock();
     }
 
     public void playDemo(String demoFile,Map map,World world){
@@ -58,30 +63,34 @@ public class MapUpdateRecorder {
                                 //获取设置后的新id
                                 int newId = Integer.parseInt(lineInfo[4]);
                                 
-                                
                                 // 创建物品
                                 switch(lineInfo[2]){
                                     case "player":{
                                         Player player = new Player(color,0,100,4,world,map,null);
+                                        player.setId(newId);
                                         creatureList.add(player);
                                         map.setThing(pos, type, player);
                                     };break;
                                     case "sworksMan":{
                                         SworksMan sworksMan = new SworksMan(0,100,0,0,2,world,map,null,0,0,0,0);
+                                        sworksMan.setId(newId);
                                         creatureList.add(sworksMan);
                                         map.setThing(pos, type, sworksMan);
                                     };break;
                                     case "shooter":{
                                         Shooter shooter = new Shooter(0,100,1,world,map,null,null,0,0,0,0);
+                                        shooter.setId(newId);
                                         creatureList.add(shooter);
                                         map.setThing(pos, type, shooter);
                                     };break;
                                     case "reward":{
                                         Reward reward = new Reward(color,(int)glyph,world);
+                                        reward.setId(newId);
                                         map.setThing(pos, type, reward);
                                     };break;
                                     case "cannonball":{
                                         Cannonball cannonball = new Cannonball(0,0,world);
+                                        cannonball.setId(newId);
                                         map.setThing(pos, type, cannonball);
                                     };break;
                                 }
@@ -96,6 +105,18 @@ public class MapUpdateRecorder {
                                 Tuple<Integer,Integer> destPos = new Tuple<Integer,Integer>(Integer.parseInt(destPosInfo[0]),Integer.parseInt(destPosInfo[1]));
                                 // move thing
                                 map.moveThing(beginPos, destPos);
+                            };break;
+                            case "beAttacked":{
+                                int id = Integer.parseInt(lineInfo[1]);
+                                for(Creature c:creatureList){
+                                    if(c.getId() == id){
+                                        c.beAttack(1);
+                                        if(c.getHp() <= 0){
+                                            map.setThing(c.getPos(), 0, new Floor(world));
+                                        }
+                                        break;
+                                    }
+                                }
                             };break;
                         }
                         Thread.sleep(66);// 10 fps
@@ -119,13 +140,23 @@ public class MapUpdateRecorder {
 
     public void AddInfo(int id, String itemType,String actionType, Tuple<Integer, Integer> beginPos,
             Tuple<Integer, Integer> destPos, int newIdAfterSet) {
+        lock.lock();
         infolist.add(new MapUpdateInfo(id, itemType, actionType, beginPos, destPos, newIdAfterSet));
+        lock.unlock();
     }
 
     public void AddInfo(int id, String itemType, String actionType, Tuple<Integer, Integer> beginPos,
         Tuple<Integer, Integer> destPos, int newIdAfterSet, int glyph, Color color) {
-    infolist.add(new MapUpdateInfo(id, itemType, actionType, beginPos, destPos, newIdAfterSet,glyph,color));
+        lock.lock();
+        infolist.add(new MapUpdateInfo(id, itemType, actionType, beginPos, destPos, newIdAfterSet,glyph,color));
+        lock.unlock();
     }
+
+    public void AddInfo(int id,  String actionType) {
+        lock.lock();
+        infolist.add(new MapUpdateInfo(id, actionType));
+        lock.unlock();
+    }   
 
     public void saveRecord(){
         try{

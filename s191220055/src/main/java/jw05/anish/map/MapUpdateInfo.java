@@ -38,6 +38,18 @@ public class MapUpdateInfo { // 地图每更新一次状态后输出的log信息
         this.color = color;
     }
 
+    
+    public MapUpdateInfo(int id, String actionType) {
+        this.id = id;
+        this.actionType = actionType;
+        this.itemType = null;
+        this.beginPos = null;
+        this.destPos = null;
+        this.newIdAfterSet = -1;
+        this.glyph = -1;
+        this.color = null;
+    }
+
     public void Output() {
         System.out.println(this.toString());
     }
@@ -62,6 +74,10 @@ public class MapUpdateInfo { // 地图每更新一次状态后输出的log信息
                         String.valueOf(glyph) + ' ' +
                         String.valueOf(this.color.getRed()) + ',' + String.valueOf(this.color.getGreen()) + ','
                         + String.valueOf(this.color.getBlue());
+            };break;
+            case "beAttacked":{
+                line = String.valueOf(actionType) + ' ' +
+                        String.valueOf(id);
             };break;
         }
         return line;

@@ -32,6 +32,9 @@ public class RefreshScreen implements Runnable {
                 mainWindow.repaint();
                 break;
             }
+            else{
+                mainWindow.repaint();
+            }
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {

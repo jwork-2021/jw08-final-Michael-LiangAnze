@@ -163,7 +163,8 @@ public class SworksMan extends Creature implements Runnable {
                     } else {
                         if (target.getHp() >= 0) {
                             if (cd == 4) {
-                                target.beAttack(damage);
+                                // target.beAttack(damage);
+                                map.playerBeAttacked(target.getId());
                                 cd = 3;
                             }
                         } else {

@@ -23,7 +23,7 @@ public class Map {
     private Lock lock = null;
     private ArrayList<Creature> creatureList;
     World world;
-    int idCount = 100; // 避开冲突
+    int idCount = 0; 
     MapUpdateRecorder recoreder;
 
     public Map(World world) {
@@ -127,7 +127,7 @@ public class Map {
                 if (index != -1) {
                     creatureList.remove(index);
                 }
-                if (creatureList.size() == 1) {
+                if (creatureList.size() == 1 && creatureList.get(0).getType().equals("player")) {
                     world.setWorldState(2);
                     recoreder.saveRecord();
                 }
@@ -189,15 +189,48 @@ public class Map {
                     creatureList.remove(index);
                 }
             }
-            if (creatureList.size() == 1) {
+            else if(world.getWorldState() == 4){ //demo模式，强制设置
+                map[pos.first][pos.second] = type;
+                world.put(t, pos);
+                res = true;
+            }
+            if (creatureList.size() == 1 && creatureList.get(0).getType().equals("player")) {
                 world.setWorldState(2);
                 recoreder.saveRecord();
             }
         }
+
+        //分配id
+        if(res){
+            t.setId(idCount);
+            idCount++;
+        }
         // 记录信息并输出
-        recoreder.AddInfo(t.getId(), t.getType(), "setThing", pos, null, res ? idCount++ : -1, (int) t.getGlyph(),
+        recoreder.AddInfo(-1, t.getType(), "setThing", pos, null, t.getId(), (int) t.getGlyph(),
                 t.getColor());
+
         lock.unlock();
         return res;
+    }
+
+    public void playerBeAttacked(int id){ // 只用于单人模式记录近战伤害
+        lock.lock();
+        Tuple<Integer, Integer> tempPos;
+        for (int i = 0; i < creatureList.size(); ++i) {
+            if (creatureList.get(i).getId() == id) {
+                tempPos = creatureList.get(i).getPos();
+                creatureList.get(i).beAttack(1);
+                if (creatureList.get(i).getHp() <= 0) {
+                    cleanBlock(tempPos);
+                    map[tempPos.first][tempPos.second] = 0;// 清空坐标
+                }
+                break;
+            }
+        }
+        recoreder.AddInfo(id,"beAttacked");
+        if(world.getWorldState() == 3){//玩家hp <= 0 
+            recoreder.saveRecord();
+        }
+        lock.unlock();
     }
 }

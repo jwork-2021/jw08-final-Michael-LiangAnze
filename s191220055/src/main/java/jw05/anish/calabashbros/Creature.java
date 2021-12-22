@@ -45,6 +45,10 @@ public class Creature extends Thing {
         }
     }
 
+    public void setHp(int hp){
+        this.hp = hp;
+    }
+    
     public int getHp() {
         return hp;
     }

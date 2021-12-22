@@ -30,7 +30,6 @@ public class WorldScreen implements Screen {
     private CannonballList cannonballList;
     private ArrayList<Creature> creatureList;
     private ExecutorService exec;
-    private int idCount = 0;
     private String ipOrDemoFile;
 
     public WorldScreen(boolean isOnline, boolean isDemo, String ipOrDemoFile) {
@@ -116,12 +115,6 @@ public class WorldScreen implements Screen {
         world.setRulesWorld();
     }
 
-    private int assignId() {
-        int temp = idCount;
-        idCount++;
-        return temp;
-    }
-
     @Override
     public void gamingScreen() {
         world.setGamingWorld();
@@ -167,18 +160,6 @@ public class WorldScreen implements Screen {
         creatureList.add(sworksMan2);
         creatureList.add(sworksMan3);
         creatureList.add(sworksMan4);
-
-        // 为生物分配id
-        player.setId(assignId());
-
-        shooter1.setId(assignId());
-        shooter2.setId(assignId());
-        shooter3.setId(assignId());
-
-        sworksMan1.setId(assignId());
-        sworksMan2.setId(assignId());
-        sworksMan3.setId(assignId());
-        sworksMan4.setId(assignId());
 
         // 创建位置
         Tuple<Integer, Integer> playerPos = new Tuple<Integer, Integer>(20, 20);
