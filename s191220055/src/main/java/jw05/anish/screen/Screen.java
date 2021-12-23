@@ -15,7 +15,7 @@ public interface Screen {
 
     public void rulesScreen();
 
-    public void gamingScreen();
+    public void standAloneGameScreen();
 
     public void gameOverScreen();
 
@@ -24,5 +24,9 @@ public interface Screen {
     public void demoScreen();
     
     public ExecutorService getThreadPool();
+
+    //线上部分
+
+    public void onlineGameScreen();
     
 }

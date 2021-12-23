@@ -28,6 +28,7 @@ import jw05.asciiPanel.AsciiPanel;
 import jw05.anish.map.Map;
 import jw05.anish.map.MapUpdateRecorder;
 import jw05.anish.net.Client;
+import jw05.anish.net.Server;
 
 public class WorldScreen implements Screen {
 
@@ -50,7 +51,7 @@ public class WorldScreen implements Screen {
     //网络相关
     private final int port = 9093;// //写死
     private Client client= null;
-
+    private Server server;
 
     public WorldScreen(String[]args) { //接受传入的参数
         // 对传入的参数进行解析
@@ -77,11 +78,15 @@ public class WorldScreen implements Screen {
             rulesScreen();
             if(!clientOrServer){ //客户端
                 world.setWorldState(7);
-                this.client = new Client("localhost",9093,world, map);
+                onlineGameScreen();
+                this.client = new Client("localhost",port,false,world, map);
                 System.out.println("start game as client");
             }
             else{ // 服务器端
                 world.setWorldState(6);
+                onlineGameScreen();
+                this.server = new Server(port,world, map);
+                this.client = new Client("localhost",port,true,world, map);
                 System.out.println("start game as server");
             }
         }
@@ -202,7 +207,7 @@ public class WorldScreen implements Screen {
     }
 
     @Override
-    public void gamingScreen() {
+    public void standAloneGameScreen() {
         world.setGamingWorld();
         loadMapFile(isRecord);
         creatureList = new ArrayList<Creature>();
@@ -313,6 +318,11 @@ public class WorldScreen implements Screen {
         mur.playDemo(this.demoFile, this.map,this.world);
     }
 
+    @Override
+    public void onlineGameScreen() {
+        world.setGamingWorld();
+        loadMapFile(false);
+    }
     @Override
     public int getScreenState() {
         return world.getWorldState();
