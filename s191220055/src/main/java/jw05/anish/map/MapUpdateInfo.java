@@ -16,6 +16,7 @@ public class MapUpdateInfo { // 地图每更新一次状态后输出的log信息
     int glyph = -1; // 在字符表中的下标
     Color color;// 颜色
 
+    //设置物品
     public MapUpdateInfo(int id, String itemType, String actionType, Tuple<Integer, Integer> beginPos,
             Tuple<Integer, Integer> destPos, int newIdAfterSet) {
         this.id = id;
@@ -26,6 +27,7 @@ public class MapUpdateInfo { // 地图每更新一次状态后输出的log信息
         this.newIdAfterSet = newIdAfterSet;
     }
 
+    //移动物品
     public MapUpdateInfo(int id, String itemType, String actionType, Tuple<Integer, Integer> beginPos,
             Tuple<Integer, Integer> destPos, int newIdAfterSet, int glyph, Color color) {
         this.id = id;
@@ -38,7 +40,7 @@ public class MapUpdateInfo { // 地图每更新一次状态后输出的log信息
         this.color = color;
     }
 
-    
+    //近战攻击
     public MapUpdateInfo(int id, String actionType) {
         this.id = id;
         this.actionType = actionType;
@@ -50,6 +52,15 @@ public class MapUpdateInfo { // 地图每更新一次状态后输出的log信息
         this.color = null;
     }
 
+    //远战攻击
+    public MapUpdateInfo(int playerId, int direction,String actionType) { 
+        this.id = playerId;
+        this.actionType = actionType;//"launch"
+
+        this.newIdAfterSet = -1;
+        this.glyph = direction; //复用一下
+    }
+    
     public void Output() {
         System.out.println(this.toString());
     }

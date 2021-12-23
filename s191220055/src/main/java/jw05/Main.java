@@ -21,9 +21,11 @@ public class Main extends JFrame implements KeyListener {
     public Main(String[] args) {
         super();
         //for debug
-        // String[]myargs = {"-record"};
-        String[]myargs = {"-demo","demo-1640168085000.txt"};
         // String[]myargs = {};
+        // String[]myargs = {"-record"};
+        // String[]myargs = {"-demo","demo-1640168085000.txt"};
+        String[]myargs = {"-online","123"};
+        // String[]myargs = {"-server"};
         terminal = new AsciiPanel(World.WIDTH, World.HEIGHT, AsciiFont.Guybrush_square_16x16); 
         add(terminal);
         pack();

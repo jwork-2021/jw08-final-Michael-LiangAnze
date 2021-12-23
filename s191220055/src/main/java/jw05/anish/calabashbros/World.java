@@ -7,7 +7,7 @@ import jw05.anish.algorithm.Tuple;
 public class World {
 
     public static final int WIDTH = 40;
-    public static final int HEIGHT = WIDTH + 1;
+    public static final int HEIGHT = WIDTH + 4;
     public final int hpStartX = 4;
     public final int hpStartY = WIDTH;
     public final int scoreStartX = hpStartX + 17;

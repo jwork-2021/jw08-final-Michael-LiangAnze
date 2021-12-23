@@ -11,6 +11,16 @@ public class RefreshScreen implements Runnable {
         this.screen = screen;
     }
 
+    // 状态0：单人游戏规则界面
+    // 状态1：单人游戏界面
+    // 状态2：单人游戏胜利界面
+    // 状态3：单人游戏失败界面
+    // 状态4：播放demo界面
+    // 状态5：demo播放完毕界面
+    // 状态6：多人游戏等待玩家界面（服务器对应的玩家
+    // 状态7：多人游戏等待玩家界面（客户端对应的玩家
+    // 状态9：多人游戏对战界面
+    // 状态10：多人游戏结束界面
     @Override
     public void run() {
         int state = 0;

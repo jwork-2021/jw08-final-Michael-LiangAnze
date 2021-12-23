@@ -103,7 +103,7 @@ public class Map {
         lock.lock();
         String type = world.get(beginPos.first, beginPos.second).getType(); //获取移动物品的类型
         if(recoreder != null){ //确定录像
-            recoreder.AddInfo(world.get(beginPos.first, beginPos.second).getId(), type, "moveThing", beginPos, destPos,-1);
+            recoreder.AddMoveThingInfo(world.get(beginPos.first, beginPos.second).getId(), type, beginPos, destPos,-1);
         }
         if (map[destPos.first][destPos.second] == 0) {// 允许移动
             int temp = map[beginPos.first][beginPos.second];
@@ -126,7 +126,7 @@ public class Map {
                             map[tempPos.first][tempPos.second] = 0;// 清空坐标
                             index = i;
                         }
-                        break;
+                        break; 
                     }
                 }
                 if (index != -1) { //移除一个生物
@@ -251,7 +251,7 @@ public class Map {
         }
         // 记录信息并输出
         if(recoreder != null){
-            recoreder.AddInfo(-1, t.getType(), "setThing", pos, null, t.getId(), (int) t.getGlyph(),
+            recoreder.AddSetThingInfo(-1, t.getType(), pos, null, t.getId(), (int) t.getGlyph(),
             t.getColor());
         }
 
@@ -276,7 +276,7 @@ public class Map {
             }
         }
         if(recoreder != null){
-            recoreder.AddInfo(id,"beAttacked"); //添加记录
+            recoreder.AddCloseAttackInfo(id); //添加记录
         }
         if (index != -1) { //移除一个生物
             creatureList.remove(index);

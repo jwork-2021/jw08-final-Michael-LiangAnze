@@ -5,6 +5,10 @@ import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.ConnectException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,9 +27,11 @@ import jw05.anish.calabashbros.World;
 import jw05.asciiPanel.AsciiPanel;
 import jw05.anish.map.Map;
 import jw05.anish.map.MapUpdateRecorder;
+import jw05.anish.net.Client;
 
 public class WorldScreen implements Screen {
 
+    //
     private World world;
     private Map map;
     private Player player;
@@ -33,11 +39,18 @@ public class WorldScreen implements Screen {
     private ArrayList<Creature> creatureList;
     private ExecutorService exec;
     
+    //初始化游戏获得参数
     private boolean isOnline = false;
     private boolean isRecord = false;
     private boolean ifPlayDemo = false;
+    private boolean clientOrServer = false; //默认为客户端
     private String ip = null;
     private String demoFile = null;
+
+    //网络相关
+    private final int port = 9093;// //写死
+    private Client client= null;
+
 
     public WorldScreen(String[]args) { //接受传入的参数
         // 对传入的参数进行解析
@@ -60,6 +73,18 @@ public class WorldScreen implements Screen {
             System.out.println("Replaying demo");
             demoScreen();
         }
+        else if(isOnline){ // 在线游戏
+            rulesScreen();
+            if(!clientOrServer){ //客户端
+                world.setWorldState(7);
+                this.client = new Client("localhost",9093,world, map);
+                System.out.println("start game as client");
+            }
+            else{ // 服务器端
+                world.setWorldState(6);
+                System.out.println("start game as server");
+            }
+        }
         else{
             System.out.println("Wrong arguments!");
             System.exit(-1);
@@ -67,11 +92,11 @@ public class WorldScreen implements Screen {
     }
 
     private void parseArgs(String[]args){
-        // for(String s:args){
-        //     if(s.substring(0, 1).equals("-")){
-        //         s = s.toLowerCase();
-        //     }
-        // }
+        for(String s:args){
+            if(s.substring(0, 1).equals("-")){
+                s = s.toLowerCase();
+            }
+        }
         // 是否为在线游戏
         for(int i = 0;i < args.length;++i){
             if(args[i].equals("-online") && i != args.length - 1){ // 在线模式
@@ -91,6 +116,12 @@ public class WorldScreen implements Screen {
             if(args[i].equals("-demo") && i != args.length - 1){ 
                 this.ifPlayDemo = true;
                 this.demoFile = args[i + 1];
+                break;
+            }
+        }
+        for(int i = 0;i < args.length;++i){
+            if(args[i].equals("-server")){ 
+                this.clientOrServer = true;
                 break;
             }
         }
@@ -312,29 +343,35 @@ public class WorldScreen implements Screen {
 
     @Override
     public Screen respondToUserInput(KeyEvent key) {
-        if (world.getWorldState() == 0) { // 开始界面
-            if (key.getKeyCode() == KeyEvent.VK_ENTER) {
-                world.setWorldState(1);
-                gamingScreen();
-            }
-        } else if (world.getWorldState() == 1) {
-            switch (key.getKeyCode()) {
-                case KeyEvent.VK_W:
-                    player.movePlayer(2);
-                    break;
-                case KeyEvent.VK_S:
-                    player.movePlayer(1);
-                    break;
-                case KeyEvent.VK_A:
-                    player.movePlayer(3);
-                    break;
-                case KeyEvent.VK_D:
-                    player.movePlayer(4);
-                    break;
-                case KeyEvent.VK_SPACE:
-                    player.setAttackState();
-            }
+        // if (world.getWorldState() == 0) { // 开始界面
+        //     if (key.getKeyCode() == KeyEvent.VK_ENTER) {
+        //         world.setWorldState(1);
+        //         gamingScreen();
+        //     }
+        // } else if (world.getWorldState() == 1) {
+        //     switch (key.getKeyCode()) {
+        //         case KeyEvent.VK_W:
+        //             player.movePlayer(2);
+        //             break;
+        //         case KeyEvent.VK_S:
+        //             player.movePlayer(1);
+        //             break;
+        //         case KeyEvent.VK_A:
+        //             player.movePlayer(3);
+        //             break;
+        //         case KeyEvent.VK_D:
+        //             player.movePlayer(4);
+        //             break;
+        //         case KeyEvent.VK_SPACE:
+        //             player.setAttackState();
+        //     }
+        // }
+        if(world.getWorldState() > 5){
+            
         }
+        this.client.handleKeyEvent(key);
         return this;
     }
 }
+
+
