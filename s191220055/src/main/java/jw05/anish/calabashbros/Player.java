@@ -75,6 +75,10 @@ public class Player extends Creature implements Runnable {
         return this.rank;
     }
 
+    public int getScore(){
+        return this.score;
+    }
+
     @Override
     public synchronized void beAttack(int damage) {
         this.hp -= damage;

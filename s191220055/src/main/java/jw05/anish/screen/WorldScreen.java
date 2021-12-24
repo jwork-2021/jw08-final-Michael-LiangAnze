@@ -80,14 +80,15 @@ public class WorldScreen implements Screen {
                 world.setWorldState(7);
                 onlineGameScreen();
                 this.client = new Client("localhost",port,false,world, map);
-                System.out.println("start game as client");
+                // System.out.println("start game as client");
             }
             else{ // 服务器端
+                // world.setWorldState(6);
                 world.setWorldState(6);
                 onlineGameScreen();
                 this.server = new Server(port,world, map);
                 this.client = new Client("localhost",port,true,world, map);
-                System.out.println("start game as server");
+                // System.out.println("start game as server");
             }
         }
         else{
@@ -377,9 +378,9 @@ public class WorldScreen implements Screen {
         //     }
         // }
         if(world.getWorldState() > 5){
-            
+            this.client.handleKeyEvent(key);
         }
-        this.client.handleKeyEvent(key);
+        
         return this;
     }
 }

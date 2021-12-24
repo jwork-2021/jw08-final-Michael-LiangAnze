@@ -1,6 +1,8 @@
 package jw05.anish.calabashbros;
 
 import java.awt.Color;
+import java.util.ArrayList;
+
 import jw05.anish.screen.ScreenInfo;
 import jw05.anish.algorithm.Tuple;
 
@@ -159,6 +161,66 @@ public class World {
             }
         }
 
+    }
+
+    private final int otherInfo1BeginX = 0;
+    private final int otherInfo1BeginY = WIDTH + 3;
+
+    private final int otherInfo2BeginX = 10;
+    private final int otherInfo2BeginY = WIDTH + 3;
+
+    public void updateOnlineGamingInfo(ArrayList<Player> playerList,String otherInfo1,String otherInfo2){
+        for(int i = 0;i < playerList.size();++i){
+            int tempHp = playerList.get(i).getHp();
+            int tempScore = playerList.get(i).getScore();
+
+            // non-data
+            tiles[transformX(hpStartX)][transformY(0)+i]
+                .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'H'));
+            tiles[transformX(hpStartX + 1)][transformY(0)+i]
+                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'P'));
+            tiles[transformX(hpStartX + 2)][transformY(0)+i]
+                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) ':'));
+            tiles[transformX(scoreStartX)][transformY(0)+i]
+                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'S'));
+            tiles[transformX(scoreStartX + 1)][transformY(0)+i]
+                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'C'));
+            tiles[transformX(scoreStartX + 2)][transformY(0)+i]
+                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'O'));
+            tiles[transformX(scoreStartX + 3)][transformY(0)+i]
+                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'R'));
+            tiles[transformX(scoreStartX + 4)][transformY(0)+i]
+                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'E'));
+            tiles[transformX(scoreStartX + 5)][transformY(0)+i]
+                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) ':'));
+
+            // data
+            for (int j = hpStartX + 3; j < scoreStartX; ++j) {
+                tiles[transformX(j)][transformY(0)+i].setThing(new ScreenInfo(this, new Color(0, 0, 0), 0));
+            }
+            for (int j = scoreStartX + 6; j < WIDTH; ++j) {
+                tiles[transformX(j)][transformY(0)+i].setThing(new ScreenInfo(this, new Color(0, 0, 0), 0));
+            }
+            for (int j = 0; j < tempHp && j < scoreStartX; ++j) {
+                tiles[transformX(hpStartX + 3 + j)][transformY(0)+i]
+                        .setThing(new ScreenInfo(this, new Color(255, 0, 0), 3));
+            }
+            int num1 = tempScore % 10;
+            int num2 = tempScore / 10;
+            if (tempScore == 0) {
+                tiles[transformX(scoreStartX + 7)][transformY(0)+i]
+                        .setThing(new ScreenInfo(this, new Color(30, 30, 240), (int) '0'));
+            } else {
+                if (num1 != 0) {
+                    tiles[transformX(scoreStartX + 7)][transformY(0)+i]
+                            .setThing(new ScreenInfo(this, new Color(30, 30, 240), (int) '0' + num1));
+                }
+                if (num2 != 0) {
+                    tiles[transformX(scoreStartX + 6)][transformY(0)+i]
+                            .setThing(new ScreenInfo(this, new Color(30, 30, 240), (int) '0' + num2));
+                }
+            }
+        }
     }
 
     public int getWorldSize() {

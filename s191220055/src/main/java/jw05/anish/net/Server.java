@@ -31,6 +31,7 @@ public class Server {
 	private InetSocketAddress listenAddress;
 	private final int PORT = 9093;
 	private boolean isRunning = false;
+	private SocketAddress serverOwnerSocketAddress = null;
 
 	// status about game
 	private boolean waiting = false;
@@ -147,13 +148,14 @@ public class Server {
 		byte[] data = new byte[numRead];
 		System.arraycopy(readBuffer.array(), 0, data, 0, numRead);
 		String inputLine = new String(data);
-		System.out.println("Got: "+ inputLine);
+		// System.out.println("Got: "+ inputLine);
 
 		// 读完再写回去
 		handleInputFromClient(key,inputLine);
 	}
 
 	private void handleInputFromClient(SelectionKey key,String s){
+		System.out.println("server:handling:"+s);
 		String[]infoFromClient = s.split(" ");
 		if(infoFromClient.length == 0){
 			return;
@@ -163,34 +165,48 @@ public class Server {
 				
 			};break;
 			case "moveThing":{ // 是移动
-			  
+				String[]beginPosInfo = infoFromClient[1].split(",");
+				String[]destPosInfo = infoFromClient[2].split(",");
+				Tuple<Integer,Integer>beginPos = new Tuple<Integer,Integer>(Integer.parseInt(beginPosInfo[0]),Integer.parseInt(beginPosInfo[1]));
+				Tuple<Integer,Integer>destPos = new Tuple<Integer,Integer>(Integer.parseInt(destPosInfo[0]),Integer.parseInt(destPosInfo[1]));
+				if(this.map.moveThing(beginPos, destPos)){ //server try to move thing and succeed
+					broadcastToAllClient(s,null); // send to all players;attention to distinguish serverowner and others
+				}
 			} ;break;
 			case "launchCannonball":{
 				
-			};break;
-			
-			case "admitToJoin":{
-				  
 			};break;
 			case "playerJoin":{
 				if(playerNum < 4){ // allow
 					// assign info
 					PlayerInfo i = getAvailablePlayer();
-					world.put(i.player, i.pos);
+					// world.put(i.player, i.pos); 留给服务器对应的client来设置
 					playerNum++;
-					// attention:send all players in playerList to this client
+					// attention:send other players in playerList to this client using "setThing",
+					// but send to requester using "adminToJoin"
+					NetInfo n = new NetInfo("admitToJoin",i.id,i.pos,i.color);
+					write(key, n.toString()); // only use adminToJoin
 					for(PlayerInfo temp:playerList){
-						if(temp.isAsssign){
-							NetInfo n = new NetInfo("admitToJoin",temp.id,temp.pos,temp.color);
+						if(temp.isAsssign && temp.id != i.id){ // send other players to the requester
+							n = new NetInfo("setThing","player",temp.id,temp.pos,(int)temp.player.getGlyph(),temp.color);
 							write(key, n.toString());
 						}
 					}
-					//output
-					// System.out.println("A new player join in the game");
+					//broadcast the requester to other players
+					n = new NetInfo("setThing","player",i.id,i.pos,(int)i.player.getGlyph(),i.color);
+					broadcastToAllClient(n.toString(), getSocketAddress(key));
 				}
 			};break;
 			case "startGame":{
 				
+			};break;
+			case "startGameRequest":{
+				// only owner can send this message
+				this.serverOwnerSocketAddress = getSocketAddress(key); //记录下这一个地址
+				// System.out.println("got request");
+				world.setWorldState(8);
+				gaming = true;
+				broadcastToAllClient("startGame",null);
 			};break;
 			case "gameOver":{
 				
@@ -199,7 +215,7 @@ public class Server {
 	}
 
 	private void write(SelectionKey key, String s) {
-		System.out.println("write to client:"+s);
+		System.out.println("server:write to client "+key.toString()+" with info:"+s);
 		SocketChannel channel = (SocketChannel) key.channel();
 		writeBuffer.clear();
 		writeBuffer.put(s.getBytes());
@@ -212,8 +228,23 @@ public class Server {
 		}
 	}
 
-	private void broadcastToAllClient(String s) {
-
+	private void broadcastToAllClient(String s, SocketAddress exception) {
+		if(exception == null){ // send to all players
+			for(SelectionKey key:selector.keys()){
+				if(key.channel() instanceof SocketChannel){
+					write(key,s);
+				}
+			}
+		}
+		else{
+			for(SelectionKey key:selector.keys()){
+				if(key.channel() instanceof SocketChannel){
+					if(!getSocketAddress(key).equals(exception)){ // dont send to exception
+						write(key,s);
+					}
+				}
+			}
+		}
 	}
 
 	private PlayerInfo getAvailablePlayer(){
@@ -225,5 +256,11 @@ public class Server {
 			}
 		}
 		return null;
+	}
+
+	private SocketAddress getSocketAddress(SelectionKey key){
+		SocketChannel sc = (SocketChannel)key.channel();
+		Socket socket = sc.socket();
+		return socket.getRemoteSocketAddress();
 	}
 }

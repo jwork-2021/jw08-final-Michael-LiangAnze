@@ -50,7 +50,7 @@ public class NetInfo {
         this.color = color;
     }
 
-    // 玩家加入playerJoin / 开始游戏startGame / 游戏结束gameOver
+    // 玩家加入playerJoin / 请求开始游戏startGameRequest / 开始游戏startGame / 游戏结束gameOver
     public NetInfo(String actionType) { 
         this.actionType = actionType;
     }
@@ -86,13 +86,14 @@ public class NetInfo {
             case "admitToJoin":{
                 line = String.valueOf("admitToJoin") + ' ' +
                         String.valueOf(id)+ ' ' +
-                        String.valueOf(beginPos.first) + ',' + String.valueOf(beginPos.second)+ ','+
+                        String.valueOf(beginPos.first) + ',' + String.valueOf(beginPos.second)+ ' '+
                         String.valueOf(this.color.getRed()) + ',' + String.valueOf(this.color.getGreen()) + ','
                         + String.valueOf(this.color.getBlue());
                         
             };break;
             case "playerJoin":
             case "startGame":
+            case "startGameRequest":
             case "gameOver":{
                 line = String.valueOf(actionType);
             };break;
