@@ -9,6 +9,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import jw05.anish.algorithm.Tuple;
@@ -31,6 +32,8 @@ public class Client {
     private Boolean connect = false;// 是否连接了服务器
     private Boolean joinInGame = false; //是否加入了对局
     private boolean isServerOwner = false;
+
+    private ArrayList<Player>playerList = new ArrayList<Player>();
 
     // player info
     private Tuple<Integer,Integer>playerPos = null;
@@ -133,11 +136,11 @@ public class Client {
                 Color tempColor = new Color(Integer.parseInt(colorInfo[0]),Integer.parseInt(colorInfo[1]),Integer.parseInt(colorInfo[2]));
                 switch(itemType){
                     case "player": {
-                        Player player = new Player(tempColor, 0, 100, 4, world, map, null);
-                        player.setId(tempId);
-                        player.setId(tempId);
-                        // creatureList.add(player);
-                        map.setThing(pos, 1, player);
+                        Player tempPlayer = new Player(tempColor, 0, 100, 4, world, map, null);
+                        // tempPlayer.setId(tempId);
+                        map.setThing(pos, 1, tempPlayer);
+                        playerList.add(tempPlayer);
+                        world.updateOnlineGamingInfo(playerList, null, null,this.player.getId());
                     }
                 }
             };break;
@@ -149,6 +152,8 @@ public class Client {
                 player = new Player(playerColor, 0, 1, 4, world, map, null);
                 joinInGame = true;
                 map.setThing(playerPos, 1, player);
+                playerList.add(player);
+                world.updateOnlineGamingInfo(playerList, null, null,this.player.getId());
             };break;
             case "startGame":{
                 world.setWorldState(8);

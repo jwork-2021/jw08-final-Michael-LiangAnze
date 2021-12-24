@@ -9,7 +9,7 @@ import jw05.anish.algorithm.Tuple;
 public class World {
 
     public static final int WIDTH = 40;
-    public static final int HEIGHT = WIDTH + 4;
+    public static final int HEIGHT = WIDTH + 5;
     public final int hpStartX = 4;
     public final int hpStartY = WIDTH;
     public final int scoreStartX = hpStartX + 17;
@@ -163,13 +163,13 @@ public class World {
 
     }
 
-    private final int otherInfo1BeginX = 0;
-    private final int otherInfo1BeginY = WIDTH + 3;
+    private final int otherInfo1BeginX = 3;
+    private final int otherInfo1BeginY = WIDTH + 4;
 
-    private final int otherInfo2BeginX = 10;
-    private final int otherInfo2BeginY = WIDTH + 3;
+    private final int otherInfo2BeginX = 20;
+    private final int otherInfo2BeginY = WIDTH + 4;
 
-    public void updateOnlineGamingInfo(ArrayList<Player> playerList,String otherInfo1,String otherInfo2){
+    public void updateOnlineGamingInfo(ArrayList<Player> playerList,String otherInfo1,String otherInfo2,int selfId){
         for(int i = 0;i < playerList.size();++i){
             int tempHp = playerList.get(i).getHp();
             int tempScore = playerList.get(i).getScore();
@@ -221,6 +221,21 @@ public class World {
                 }
             }
         }
+        //other info
+        if(otherInfo1 != null){
+            
+            for(int i = 0;i < otherInfo1.length();++i){
+                tiles[otherInfo1BeginX+i][otherInfo1BeginY]
+                                .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int)otherInfo1.charAt(i)));
+            }
+        }
+        if(otherInfo2 != null){
+            for(int i = 0;i < otherInfo2.length();++i){
+                tiles[otherInfo2BeginX+i][otherInfo2BeginY]
+                                .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int)otherInfo2.charAt(i)));
+            }
+        }
+
     }
 
     public int getWorldSize() {
