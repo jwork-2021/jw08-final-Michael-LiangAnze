@@ -103,11 +103,7 @@ public class Client {
                     ;
                     break;
             }
-        } else { // owner
-            switch (infoFromServer[0]) {
-
-            }
-        }
+        } 
         // shared info by both client and server
         switch (infoFromServer[0]) {
             case "setThing": { // 是设置新物品
@@ -127,7 +123,7 @@ public class Client {
                         map.setThing(pos, 1, tempPlayer);
                         creatureList.add(tempPlayer);
                         playerList.add(tempPlayer);
-                        world.updateOnlineGamingInfo(playerList, null, null, this.player.getId());
+                        world.updateOnlineGamingInfo(playerList, this.player.getId());
                     }
                 }
             }
@@ -145,7 +141,7 @@ public class Client {
                 if (!isServerOwner) {
                     boolean test = map.moveThing(beginPos, destPos);
                     if(!test && tempItemType.equals("cannonball")){ // cannonball fail to move 
-                        world.updateOnlineGamingInfo(playerList, null, null, player.getId());
+                        world.updateOnlineGamingInfo(playerList,player.getId());
                     }
                 }
                 if (beginPos.first == this.playerPos.first && beginPos.second == this.playerPos.second) {
@@ -166,7 +162,7 @@ public class Client {
                 map.setThing(playerPos, 1, player);
                 creatureList.add(player);
                 playerList.add(player);
-                world.updateOnlineGamingInfo(playerList, null, null, -1);
+                world.updateOnlineGamingInfo(playerList,  -1);
             }
                 ;
                 break;
@@ -176,6 +172,9 @@ public class Client {
             }
                 ;
                 break;
+            case "gameOver":{
+                world.setWorldState(9);
+            };break;
         }
     }
 

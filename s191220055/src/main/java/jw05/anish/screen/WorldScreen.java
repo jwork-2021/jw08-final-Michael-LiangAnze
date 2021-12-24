@@ -87,6 +87,7 @@ public class WorldScreen implements Screen {
                 world.setWorldState(6);
                 onlineGameScreen();
                 this.server = new Server(port,world, map);
+                map.setServer(server);
                 this.client = new Client("localhost",port,true,world, map);
                 this.server.setServerOwner(this.client);
                 // System.out.println("start game as server");

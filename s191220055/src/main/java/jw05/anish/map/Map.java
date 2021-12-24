@@ -15,6 +15,7 @@ import jw05.anish.calabashbros.Floor;
 import jw05.anish.calabashbros.Player;
 import jw05.anish.calabashbros.Thing;
 import jw05.anish.calabashbros.World;
+import jw05.anish.net.Server;
 
 public class Map {
     private int[][] map;
@@ -25,6 +26,7 @@ public class Map {
     World world;
     int idCount = 0;
     MapUpdateRecorder recoreder = null;
+    Server server = null;
 
     public Map(World world, boolean isRecord) {
         this.mapFile = (new File("")).getAbsolutePath() + "\\src\\main\\java\\jw05\\anish\\map\\map1.txt";
@@ -36,6 +38,10 @@ public class Map {
         }
     }
 
+    public void setServer(Server s){
+        this.server = s;
+    }
+    
     public String getMapFile() {
         return this.mapFile;
     }

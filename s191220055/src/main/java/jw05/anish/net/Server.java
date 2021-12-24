@@ -41,8 +41,8 @@ public class Server {
 	private boolean gaming = false;
 	private boolean gameover = false;
 	private int playerNum = 0;
-	private ArrayList<PlayerInfo> playerSourceList= new ArrayList<PlayerInfo>();
-	private CannonballList cannonballList= null;
+	private ArrayList<PlayerInfo> playerSourceList = new ArrayList<PlayerInfo>();
+	private CannonballList cannonballList = null;
 	private int id = 0;
 
 	// io
@@ -55,10 +55,14 @@ public class Server {
 		this.map = map;
 		this.cannonballList = new CannonballList(1, 600, map, world);
 		cannonballList.setServer(this);
-		playerSourceList.add(new PlayerInfo(new Player(Color.red, 0, 1, 4, world, map, null), id, new Tuple<Integer, Integer>(3,17), Color.red));
-		playerSourceList.add(new PlayerInfo(new Player(Color.green, 0, 1, 4, world, map, null), id, new Tuple<Integer, Integer>(4,17), Color.green));
-		playerSourceList.add(new PlayerInfo(new Player(Color.yellow, 0, 1, 4, world, map, null), id, new Tuple<Integer, Integer>(5,17), Color.yellow));
-		playerSourceList.add(new PlayerInfo(new Player(Color.blue, 0, 1, 4, world, map, null), id, new Tuple<Integer, Integer>(6,17), Color.blue));
+		playerSourceList.add(new PlayerInfo(new Player(Color.red, 0, 1, 4, world, map, null), id,
+				new Tuple<Integer, Integer>(3, 17), Color.red));
+		playerSourceList.add(new PlayerInfo(new Player(Color.green, 0, 1, 4, world, map, null), id,
+				new Tuple<Integer, Integer>(4, 17), Color.green));
+		playerSourceList.add(new PlayerInfo(new Player(Color.yellow, 0, 1, 4, world, map, null), id,
+				new Tuple<Integer, Integer>(5, 17), Color.yellow));
+		playerSourceList.add(new PlayerInfo(new Player(Color.blue, 0, 1, 4, world, map, null), id,
+				new Tuple<Integer, Integer>(6, 17), Color.blue));
 
 		try {
 			startServer();
@@ -68,7 +72,7 @@ public class Server {
 		}
 	}
 
-	public void setServerOwner(Client c){
+	public void setServerOwner(Client c) {
 		this.serverOwner = c;
 	}
 
@@ -110,8 +114,7 @@ public class Server {
 							}
 						}
 					}
-				} 
-				catch (Exception e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 
@@ -162,83 +165,101 @@ public class Server {
 		// System.out.println("Got: "+ inputLine);
 
 		// 读完再写回去
-		handleInputFromClient(key,inputLine);
+		handleInputFromClient(key, inputLine);
 	}
 
-	private void handleInputFromClient(SelectionKey key,String s){
-		System.out.println("server:handling:"+s);
-		String[]infoFromClient = s.split(" ");
-		if(infoFromClient.length == 0){
+	private void handleInputFromClient(SelectionKey key, String s) {
+		System.out.println("server:handling:" + s);
+		String[] infoFromClient = s.split(" ");
+		if (infoFromClient.length == 0) {
 			return;
 		}
-		switch(infoFromClient[0]){
+		switch (infoFromClient[0]) {
 			case "setThing": { // 是设置新物品
-				
-			};break;
-			case "moveThing":{ // 是移动
-				String[]beginPosInfo = infoFromClient[1].split(",");
-				String[]destPosInfo = infoFromClient[2].split(",");
-				Tuple<Integer,Integer>beginPos = new Tuple<Integer,Integer>(Integer.parseInt(beginPosInfo[0]),Integer.parseInt(beginPosInfo[1]));
-				Tuple<Integer,Integer>destPos = new Tuple<Integer,Integer>(Integer.parseInt(destPosInfo[0]),Integer.parseInt(destPosInfo[1]));
+
+			}
+				;
+				break;
+			case "moveThing": { // 是移动
+				String[] beginPosInfo = infoFromClient[1].split(",");
+				String[] destPosInfo = infoFromClient[2].split(",");
+				Tuple<Integer, Integer> beginPos = new Tuple<Integer, Integer>(Integer.parseInt(beginPosInfo[0]),
+						Integer.parseInt(beginPosInfo[1]));
+				Tuple<Integer, Integer> destPos = new Tuple<Integer, Integer>(Integer.parseInt(destPosInfo[0]),
+						Integer.parseInt(destPosInfo[1]));
 				String beginPosType = world.get(beginPos.first, beginPos.second).getType();
 				String destPosType = world.get(destPos.first, destPos.second).getType();
-				if(this.map.moveThing(beginPos, destPos)){ //server try to move thing and succeed
-					broadcastToAllClient(s,null); // send to all players;attention to distinguish serverowner and others
+				if (this.map.moveThing(beginPos, destPos)) { // server try to move thing and succeed
+					broadcastToAllClient(s, null); // send to all players;attention to distinguish serverowner and
+													// others
+				} else if (beginPosType.equals("cannonball") && destPosType.equals("player")) {
+					world.updateOnlineGamingInfo(serverOwner.getPlayerList(), -1);
 				}
-				else if(beginPosType.equals("cannonball") && destPosType.equals("player")){
-					world.updateOnlineGamingInfo(serverOwner.getPlayerList(), null, null, -1);
-				}
-			} ;break;
-			case "launchCannonball":{
-				String[]beginPosInfo = infoFromClient[1].split(",");
-				Tuple<Integer,Integer>beginPos= new Tuple<Integer,Integer>(Integer.parseInt(beginPosInfo[0]),Integer.parseInt(beginPosInfo[1]));
+			}
+				;
+				break;
+			case "launchCannonball": {
+				String[] beginPosInfo = infoFromClient[1].split(",");
+				Tuple<Integer, Integer> beginPos = new Tuple<Integer, Integer>(Integer.parseInt(beginPosInfo[0]),
+						Integer.parseInt(beginPosInfo[1]));
 				int directionInfo = Integer.parseInt(infoFromClient[2]);
-				if(cannonballList.addCannonball(beginPos, directionInfo)){
-					NetInfo ni = new NetInfo("launchCannonball",beginPos,directionInfo);
-					broadcastToAllClient(ni.toString(), getSocketAddress(key));
+				if (cannonballList.addCannonball(beginPos, directionInfo)) {
+					NetInfo ni = new NetInfo("launchCannonball", beginPos, directionInfo);
+					broadcastToAllClient(ni.toString(), this.serverOwnerSocketAddress);
 				}
-			};break;
-			case "playerJoin":{
-				if(playerNum < 4){ // allow
+			}
+				;
+				break;
+			case "playerJoin": {
+				if (playerNum < 4) { // allow
 					// assign info
 					PlayerInfo i = getAvailablePlayer();
 					// world.put(i.player, i.pos); 留给服务器对应的client来设置
 					playerNum++;
 					// attention:send other players in playerList to this client using "setThing",
 					// but send to requester using "adminToJoin"
-					NetInfo n = new NetInfo("admitToJoin",i.id,i.pos,i.color);
+					NetInfo n = new NetInfo("admitToJoin", i.id, i.pos, i.color);
 					write(key, n.toString()); // only use adminToJoin
-					for(PlayerInfo temp:playerSourceList){
-						if(temp.isAsssign && temp.id != i.id){ // send other players to the requester
-							n = new NetInfo("setThing","player",temp.id,temp.pos,(int)temp.player.getGlyph(),temp.color);
+					for (PlayerInfo temp : playerSourceList) {
+						if (temp.isAsssign && temp.id != i.id) { // send other players to the requester
+							n = new NetInfo("setThing", "player", temp.id, temp.pos, (int) temp.player.getGlyph(),
+									temp.color);
 							write(key, n.toString());
 						}
 					}
-					//broadcast the requester to other players
-					n = new NetInfo("setThing","player",i.id,i.pos,(int)i.player.getGlyph(),i.color);
+					// broadcast the requester to other players
+					n = new NetInfo("setThing", "player", i.id, i.pos, (int) i.player.getGlyph(), i.color);
 					broadcastToAllClient(n.toString(), getSocketAddress(key));
 				}
-			};break;
-			case "startGame":{
-				
-			};break;
-			case "startGameRequest":{
+			}
+				;
+				break;
+			case "startGame": {
+
+			}
+				;
+				break;
+			case "startGameRequest": {
 				// only owner can send this message
-				this.serverOwnerSocketAddress = getSocketAddress(key); //记录下这一个地址
+				this.serverOwnerSocketAddress = getSocketAddress(key); // 记录下这一个地址
 				// System.out.println("got request");
 				world.setWorldState(8);
-				new Thread(this.cannonballList,"cannonballListThread").start();
+				new Thread(this.cannonballList, "cannonballListThread").start();
 				gaming = true;
-				broadcastToAllClient("startGame",null);
-			};break;
-			case "gameOver":{
-				
-			};break;
+				broadcastToAllClient("startGame", null);
+			}
+				;
+				break;
+			case "gameOver": {
+
+			}
+				;
+				break;
 		}
 	}
 
 	private void write(SelectionKey key, String s) {
-		System.out.println("server:write to client "+key.toString()+" with info:"+s);
+		System.out.println("server:write to client " + key.toString() + " with info:" + s);
 		SocketChannel channel = (SocketChannel) key.channel();
 		writeBuffer.clear();
 		writeBuffer.put(s.getBytes());
@@ -252,27 +273,26 @@ public class Server {
 	}
 
 	private void broadcastToAllClient(String s, SocketAddress exception) {
-		if(exception == null){ // send to all players
-			for(SelectionKey key:selector.keys()){
-				if(key.channel() instanceof SocketChannel){
-					write(key,s);
+		if (exception == null) { // send to all players
+			for (SelectionKey key : selector.keys()) {
+				if (key.channel() instanceof SocketChannel) {
+					write(key, s);
 				}
 			}
-		}
-		else{
-			for(SelectionKey key:selector.keys()){
-				if(key.channel() instanceof SocketChannel){
-					if(!getSocketAddress(key).equals(exception)){ // dont send to exception
-						write(key,s);
+		} else {
+			for (SelectionKey key : selector.keys()) {
+				if (key.channel() instanceof SocketChannel) {
+					if (!getSocketAddress(key).equals(exception)) { // dont send to exception
+						write(key, s);
 					}
 				}
 			}
 		}
 	}
 
-	private PlayerInfo getAvailablePlayer(){
-		for(PlayerInfo p:playerSourceList){
-			if(!p.isAsssign){
+	private PlayerInfo getAvailablePlayer() {
+		for (PlayerInfo p : playerSourceList) {
+			if (!p.isAsssign) {
 				p.isAsssign = true;
 				p.id = id++;
 				return p;
@@ -281,13 +301,19 @@ public class Server {
 		return null;
 	}
 
-	private SocketAddress getSocketAddress(SelectionKey key){
-		SocketChannel sc = (SocketChannel)key.channel();
+	private SocketAddress getSocketAddress(SelectionKey key) {
+		SocketChannel sc = (SocketChannel) key.channel();
 		Socket socket = sc.socket();
 		return socket.getRemoteSocketAddress();
 	}
 
-	public void moveCannonball(NetInfo ni){
+	public void moveCannonball(NetInfo ni) {
 		broadcastToAllClient(ni.toString(), serverOwnerSocketAddress);
+	}
+
+	public void gameOver() {
+		this.gaming = false;
+		NetInfo ni = new NetInfo("gameOver");
+		broadcastToAllClient(ni.toString(), null);
 	}
 }
