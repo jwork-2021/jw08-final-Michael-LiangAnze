@@ -23,19 +23,18 @@ public class Map {
     private Lock lock = null;
     private ArrayList<Creature> creatureList;
     World world;
-    int idCount = 0; 
+    int idCount = 0;
     MapUpdateRecorder recoreder = null;
 
-    public Map(World world,boolean isRecord) {
+    public Map(World world, boolean isRecord) {
         this.mapFile = (new File("")).getAbsolutePath() + "\\src\\main\\java\\jw05\\anish\\map\\map1.txt";
         this.map = new int[mapSize][mapSize];// 0为可行，1为玩家、炮弹、或者敌人，其余为地图元素
         lock = new ReentrantLock(); // 可重入锁，防止冲突
         this.world = world;// 每次一修改地图的状态，马上对world修改，防止出现问题
-        if(isRecord){
+        if (isRecord) {
             recoreder = new MapUpdateRecorder();
         }
     }
-
 
     public String getMapFile() {
         return this.mapFile;
@@ -101,9 +100,9 @@ public class Map {
     public synchronized boolean moveThing(Tuple<Integer, Integer> beginPos, Tuple<Integer, Integer> destPos) {
         boolean res = false;
         lock.lock();
-        String type = world.get(beginPos.first, beginPos.second).getType(); //获取移动物品的类型
-        if(recoreder != null){ //确定录像
-            recoreder.AddMoveThingInfo(world.get(beginPos.first, beginPos.second).getId(), type, beginPos, destPos,-1);
+        String type = world.get(beginPos.first, beginPos.second).getType(); // 获取移动物品的类型
+        if (recoreder != null) { // 确定录像
+            recoreder.AddMoveThingInfo(world.get(beginPos.first, beginPos.second).getId(), type, beginPos, destPos, -1);
         }
         if (map[destPos.first][destPos.second] == 0) {// 允许移动
             int temp = map[beginPos.first][beginPos.second];
@@ -126,40 +125,45 @@ public class Map {
                             map[tempPos.first][tempPos.second] = 0;// 清空坐标
                             index = i;
                         }
-                        break; 
+                        break;
                     }
                 }
-                if (index != -1) { //移除一个生物
+                if (index != -1) { // 移除一个生物
                     creatureList.remove(index);
 
-                    //下面确定游戏状态及录像保存
-                    boolean isSave = false; //游戏结束，保存录像
-                    if(creatureList.size() == 1 && creatureList.get(0).getType().equals("player")){//情况一，只剩下玩家一人，此为单机模式胜利条件
-                        world.setWorldState(2); //胜利
-                        isSave = true;
-                    }
-                    else{ //情况二，没有玩家，失败
-                        boolean remain = false;
-                        for(Creature c:creatureList){
-                            if(c.getType().equals("player")){
-                                remain = true;
-                                break;
+                    // 下面确定游戏状态及录像保存
+                    if (world.getWorldState() < 6) { // 单机模式
+                        boolean isSave = false; // 游戏结束，保存录像
+                        if (creatureList.size() == 1 && creatureList.get(0).getType().equals("player")) {// 情况一，只剩下玩家一人，此为单机模式胜利条件
+                            world.setWorldState(2); // 胜利
+                            isSave = true;
+                        } else { // 情况二，没有玩家，失败
+                            boolean remain = false;
+                            for (Creature c : creatureList) {
+                                if (c.getType().equals("player")) {
+                                    remain = true;
+                                    break;
+                                }
+                            }
+                            if (!remain) {
+                                world.setWorldState(3);
+                                isSave = true;
                             }
                         }
-                        if(!remain){
-                            world.setWorldState(3);
-                            isSave = true;
+                        if (isSave && recoreder != null) {
+                            recoreder.saveRecord();
                         }
+                    } else { // 多人模式
+                        if (creatureList.size() == 1) {
+                            world.setWorldState(9);
+                        }
+
                     }
-                    if(isSave && recoreder != null){
-                        recoreder.saveRecord();
-                    }
-                    
                 }
             } else if (type.equals("player")) {// 该物体为玩家，判断玩家移动的目标位置是否有奖励，有则移动并获奖
                 // System.out.println("moving a blocked polayer");
                 // if (map[destPos.first][destPos.second] == 99) { // 是奖励
-                if(world.get(destPos.first, destPos.second).getType().equals("reward")){// 是奖励
+                if (world.get(destPos.first, destPos.second).getType().equals("reward")) {// 是奖励
                     // 首先清空位置
                     map[destPos.first][destPos.second] = 0;
                     world.put(new Floor(world), destPos);
@@ -210,56 +214,61 @@ public class Map {
                         break;
                     }
                 }
-                if (index != -1) { //移除一个生物
+                if (index != -1) { // 移除一个生物
                     creatureList.remove(index);
 
-                    //下面确定游戏状态及录像保存
-                    boolean isSave = false; //游戏结束，保存录像
-                    if(creatureList.size() == 1 && creatureList.get(0).getType().equals("player")){//情况一，只剩下玩家一人，此为单机模式胜利条件
-                        world.setWorldState(2); //胜利
-                        isSave = true;
-                    }
-                    else{ //情况二，没有玩家，失败
-                        boolean remain = false;
-                        for(Creature c:creatureList){
-                            if(c.getType().equals("player")){
-                                remain = true;
-                                break;
+                    // 下面确定游戏状态及录像保存
+                    if (world.getWorldState() < 6) {// 单人模式
+                        boolean isSave = false; // 游戏结束，保存录像
+                        if (creatureList.size() == 1 && creatureList.get(0).getType().equals("player")) {// 情况一，只剩下玩家一人，此为单机模式胜利条件
+                            world.setWorldState(2); // 胜利
+                            isSave = true;
+                        } else { // 情况二，没有玩家，失败
+                            boolean remain = false;
+                            for (Creature c : creatureList) {
+                                if (c.getType().equals("player")) {
+                                    remain = true;
+                                    break;
+                                }
+                            }
+                            if (!remain) {
+                                world.setWorldState(3);
+                                isSave = true;
                             }
                         }
-                        if(!remain){
-                            world.setWorldState(3);
-                            isSave = true;
+                        if (isSave && recoreder != null) {
+                            recoreder.saveRecord();
                         }
                     }
-                    if(isSave && recoreder != null){
-                        recoreder.saveRecord();
+                    else{ //多人模式
+                        if (creatureList.size() == 1) {
+                            world.setWorldState(9);
+                        }
                     }
                 }
-            }
-            else if(world.getWorldState() == 4){ //demo模式，强制设置
+            } else if (world.getWorldState() == 4) { // demo模式，强制设置
                 map[pos.first][pos.second] = type;
                 world.put(t, pos);
                 res = true;
             }
         }
 
-        //分配id
-        if(res){
+        // 分配id
+        if (res) {
             t.setId(idCount);
             idCount++;
         }
         // 记录信息并输出
-        if(recoreder != null){
+        if (recoreder != null) {
             recoreder.AddSetThingInfo(-1, t.getType(), pos, null, t.getId(), (int) t.getGlyph(),
-            t.getColor());
+                    t.getColor());
         }
 
         lock.unlock();
         return res;
     }
 
-    public void playerBeAttacked(int id){ // 只用于单人模式记录近战伤害
+    public void playerBeAttacked(int id) { // 只用于单人模式记录近战伤害
         lock.lock();
         Tuple<Integer, Integer> tempPos;
         int index = -1;
@@ -275,27 +284,27 @@ public class Map {
                 break;
             }
         }
-        if(recoreder != null){
-            recoreder.AddCloseAttackInfo(id); //添加记录
+        if (recoreder != null) {
+            recoreder.AddCloseAttackInfo(id); // 添加记录
         }
-        if (index != -1) { //移除一个生物
+        if (index != -1) { // 移除一个生物
             creatureList.remove(index);
-            //下面确定游戏状态及录像保存
-            boolean remain = true; //游戏结束，保存录像
-            for(Creature c:creatureList){
-                if(c.getType().equals("player")){
-                    remain = false; //还有玩家，未结束
+            // 下面确定游戏状态及录像保存
+            boolean remain = true; // 游戏结束，保存录像
+            for (Creature c : creatureList) {
+                if (c.getType().equals("player")) {
+                    remain = false; // 还有玩家，未结束
                     break;
                 }
             }
-            if(remain){ //没有玩家，保存录像
+            if (remain) { // 没有玩家，保存录像
                 world.setWorldState(3);
-                if(recoreder != null){
+                if (recoreder != null) {
                     recoreder.saveRecord();
                 }
             }
         }
-        
+
         lock.unlock();
     }
 }

@@ -3,17 +3,21 @@ package jw05.anish.calabashbros;
 import java.util.ArrayList;
 import jw05.anish.algorithm.Tuple;
 import jw05.anish.map.Map;
+import jw05.anish.net.NetInfo;
+import jw05.anish.net.Server;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class CannonballList implements Runnable {
     private int sleepTime;
     private ArrayList<Cannonball> cannonballList = null; // 坐标，炮弹是否有效
-    Map map;
+    private Map map;
     private int damage;
-    World world;
+    private World world;
     private Lock lock;
-
+    private Server server;
+    
     public CannonballList(int damage, int speed, Map map, World world) {
         cannonballList = new ArrayList<Cannonball>();
         this.map = map;
@@ -23,13 +27,20 @@ public class CannonballList implements Runnable {
         lock = new ReentrantLock();
     }
 
-    public void addCannonball(Tuple<Integer, Integer> cannonPos, int direction) {
+    public void setServer(Server s){ // for online game
+        this.server = s;
+    }
+
+    public boolean addCannonball(Tuple<Integer, Integer> cannonPos, int direction) {
+        boolean res = false;
         lock.lock();
         Cannonball temp = new Cannonball(direction, damage, world);
         if (map.setThing(cannonPos, 1, temp)) {
             cannonballList.add(temp);
+            res = true;
         }
         lock.unlock();
+        return res;
     }
 
     public int getDamage() {
@@ -39,31 +50,50 @@ public class CannonballList implements Runnable {
     private void move() {
         lock.lock();
         // map.getMapState(mapList);//获取地图状态
-        Tuple<Integer, Integer> pos = null;
+        Tuple<Integer, Integer> curPos = null,nextPos;
         ArrayList<Cannonball> removeList = new ArrayList<Cannonball>();
         for (Cannonball c : cannonballList) {
-            pos = c.getPos();
+            curPos = c.getPos();
             switch (c.getDirection()) {
                 case 1: {
-                    if (!map.moveThing(pos, new Tuple<Integer, Integer>(pos.first, pos.second + 1))) {// 失败，和玩家一个格子
+                    nextPos = new Tuple<Integer, Integer>(curPos.first, curPos.second + 1);
+                    if(server != null){
+                        NetInfo ni = new NetInfo("moveThing",curPos,nextPos);
+                        server.moveCannonball(ni);
+                    }
+                    if (!map.moveThing(curPos, nextPos)) {// 失败，和玩家一个格子
                         removeList.add(c);
                     }
                 }
                     break;
                 case 2: {
-                    if (!map.moveThing(pos, new Tuple<Integer, Integer>(pos.first, pos.second - 1))) {
+                    nextPos = new Tuple<Integer, Integer>(curPos.first, curPos.second - 1);
+                    if(server != null){
+                        
+                    }
+                    if (!map.moveThing(curPos, nextPos)) {
                         removeList.add(c);
                     }
                 }
                     break;
                 case 3: {
-                    if (!map.moveThing(pos, new Tuple<Integer, Integer>(pos.first - 1, pos.second))) {
+                    nextPos = new Tuple<Integer, Integer>(curPos.first - 1, curPos.second);
+                    if(server != null){
+                        NetInfo ni = new NetInfo("moveThing",curPos,nextPos);
+                        server.moveCannonball(ni);
+                    }
+                    if (!map.moveThing(curPos, nextPos)) {
                         removeList.add(c);
                     }
                 }
                     break;
                 case 4: {
-                    if (!map.moveThing(pos, new Tuple<Integer, Integer>(pos.first + 1, pos.second))) {
+                    nextPos = new Tuple<Integer, Integer>(curPos.first + 1, curPos.second);
+                    if(server != null){
+                        NetInfo ni = new NetInfo("moveThing",curPos,nextPos);
+                        server.moveCannonball(ni);
+                    }
+                    if (!map.moveThing(curPos, nextPos)) {
                         removeList.add(c);
                     }
                 }
@@ -80,7 +110,7 @@ public class CannonballList implements Runnable {
 
     @Override
     public void run() {
-        while (world.getWorldState() < 2) {
+        while (world.getWorldState() < 2 || world.getWorldState() == 8) {
             if (cannonballList.size() != 0) {
                 move();
             }

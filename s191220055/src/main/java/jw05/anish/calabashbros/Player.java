@@ -16,7 +16,7 @@ public class Player extends Creature implements Runnable {
     private CannonballList cannonballList;
     private boolean attackState;
     private int cd = 5;
-    int[][] mapList;
+    private int[][] mapList;
 
     public Player(Color color, int rank, int speed, int hp, World world, Map map, CannonballList cannonballList) {
         super(color, (char) 14, world);

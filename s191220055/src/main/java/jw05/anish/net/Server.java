@@ -20,6 +20,8 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 import jw05.anish.algorithm.Tuple;
+import jw05.anish.calabashbros.CannonballList;
+import jw05.anish.calabashbros.Creature;
 import jw05.anish.calabashbros.Player;
 import jw05.anish.calabashbros.World;
 import java.awt.Color;
@@ -28,6 +30,7 @@ public class Server {
 	private Selector selector;
 	private World world;
 	private Map map;
+	private Client serverOwner;
 	private InetSocketAddress listenAddress;
 	private final int PORT = 9093;
 	private boolean isRunning = false;
@@ -38,8 +41,10 @@ public class Server {
 	private boolean gaming = false;
 	private boolean gameover = false;
 	private int playerNum = 0;
-	private ArrayList<PlayerInfo> playerList= new ArrayList<PlayerInfo>();
+	private ArrayList<PlayerInfo> playerSourceList= new ArrayList<PlayerInfo>();
+	private CannonballList cannonballList= null;
 	private int id = 0;
+
 	// io
 	ByteBuffer readBuffer = ByteBuffer.allocate(1024);
 	ByteBuffer writeBuffer = ByteBuffer.allocate(1024);
@@ -48,10 +53,12 @@ public class Server {
 		listenAddress = new InetSocketAddress("localhost", PORT); // 只能是本地
 		this.world = world;
 		this.map = map;
-		playerList.add(new PlayerInfo(new Player(Color.red, 0, 1, 4, world, map, null), id, new Tuple<Integer, Integer>(3,17), Color.red));
-		playerList.add(new PlayerInfo(new Player(Color.green, 0, 1, 4, world, map, null), id, new Tuple<Integer, Integer>(4,17), Color.green));
-		playerList.add(new PlayerInfo(new Player(Color.yellow, 0, 1, 4, world, map, null), id, new Tuple<Integer, Integer>(5,17), Color.yellow));
-		playerList.add(new PlayerInfo(new Player(Color.blue, 0, 1, 4, world, map, null), id, new Tuple<Integer, Integer>(6,17), Color.blue));
+		this.cannonballList = new CannonballList(1, 600, map, world);
+		cannonballList.setServer(this);
+		playerSourceList.add(new PlayerInfo(new Player(Color.red, 0, 1, 4, world, map, null), id, new Tuple<Integer, Integer>(3,17), Color.red));
+		playerSourceList.add(new PlayerInfo(new Player(Color.green, 0, 1, 4, world, map, null), id, new Tuple<Integer, Integer>(4,17), Color.green));
+		playerSourceList.add(new PlayerInfo(new Player(Color.yellow, 0, 1, 4, world, map, null), id, new Tuple<Integer, Integer>(5,17), Color.yellow));
+		playerSourceList.add(new PlayerInfo(new Player(Color.blue, 0, 1, 4, world, map, null), id, new Tuple<Integer, Integer>(6,17), Color.blue));
 
 		try {
 			startServer();
@@ -59,6 +66,10 @@ public class Server {
 			System.out.println("fail to start server");
 			e.printStackTrace();
 		}
+	}
+
+	public void setServerOwner(Client c){
+		this.serverOwner = c;
 	}
 
 	private void startServer() throws IOException {
@@ -169,12 +180,23 @@ public class Server {
 				String[]destPosInfo = infoFromClient[2].split(",");
 				Tuple<Integer,Integer>beginPos = new Tuple<Integer,Integer>(Integer.parseInt(beginPosInfo[0]),Integer.parseInt(beginPosInfo[1]));
 				Tuple<Integer,Integer>destPos = new Tuple<Integer,Integer>(Integer.parseInt(destPosInfo[0]),Integer.parseInt(destPosInfo[1]));
+				String beginPosType = world.get(beginPos.first, beginPos.second).getType();
+				String destPosType = world.get(destPos.first, destPos.second).getType();
 				if(this.map.moveThing(beginPos, destPos)){ //server try to move thing and succeed
 					broadcastToAllClient(s,null); // send to all players;attention to distinguish serverowner and others
 				}
+				else if(beginPosType.equals("cannonball") && destPosType.equals("player")){
+					world.updateOnlineGamingInfo(serverOwner.getPlayerList(), null, null, -1);
+				}
 			} ;break;
 			case "launchCannonball":{
-				
+				String[]beginPosInfo = infoFromClient[1].split(",");
+				Tuple<Integer,Integer>beginPos= new Tuple<Integer,Integer>(Integer.parseInt(beginPosInfo[0]),Integer.parseInt(beginPosInfo[1]));
+				int directionInfo = Integer.parseInt(infoFromClient[2]);
+				if(cannonballList.addCannonball(beginPos, directionInfo)){
+					NetInfo ni = new NetInfo("launchCannonball",beginPos,directionInfo);
+					broadcastToAllClient(ni.toString(), getSocketAddress(key));
+				}
 			};break;
 			case "playerJoin":{
 				if(playerNum < 4){ // allow
@@ -186,7 +208,7 @@ public class Server {
 					// but send to requester using "adminToJoin"
 					NetInfo n = new NetInfo("admitToJoin",i.id,i.pos,i.color);
 					write(key, n.toString()); // only use adminToJoin
-					for(PlayerInfo temp:playerList){
+					for(PlayerInfo temp:playerSourceList){
 						if(temp.isAsssign && temp.id != i.id){ // send other players to the requester
 							n = new NetInfo("setThing","player",temp.id,temp.pos,(int)temp.player.getGlyph(),temp.color);
 							write(key, n.toString());
@@ -205,6 +227,7 @@ public class Server {
 				this.serverOwnerSocketAddress = getSocketAddress(key); //记录下这一个地址
 				// System.out.println("got request");
 				world.setWorldState(8);
+				new Thread(this.cannonballList,"cannonballListThread").start();
 				gaming = true;
 				broadcastToAllClient("startGame",null);
 			};break;
@@ -248,7 +271,7 @@ public class Server {
 	}
 
 	private PlayerInfo getAvailablePlayer(){
-		for(PlayerInfo p:playerList){
+		for(PlayerInfo p:playerSourceList){
 			if(!p.isAsssign){
 				p.isAsssign = true;
 				p.id = id++;
@@ -262,5 +285,9 @@ public class Server {
 		SocketChannel sc = (SocketChannel)key.channel();
 		Socket socket = sc.socket();
 		return socket.getRemoteSocketAddress();
+	}
+
+	public void moveCannonball(NetInfo ni){
+		broadcastToAllClient(ni.toString(), serverOwnerSocketAddress);
 	}
 }

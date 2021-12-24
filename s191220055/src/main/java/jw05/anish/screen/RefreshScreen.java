@@ -19,8 +19,8 @@ public class RefreshScreen implements Runnable {
     // 状态5：demo播放完毕界面
     // 状态6：多人游戏等待玩家界面（服务器对应的玩家
     // 状态7：多人游戏等待玩家界面（客户端对应的玩家
-    // 状态9：多人游戏对战界面
-    // 状态10：多人游戏结束界面
+    // 状态8：多人游戏对战界面
+    // 状态9：多人游戏结束界面
     @Override
     public void run() {
         int state = 0;
@@ -39,6 +39,11 @@ public class RefreshScreen implements Runnable {
                 mainWindow.repaint();
             }
             else if(state == 5){ //demo播放完毕
+                mainWindow.repaint();
+                break;
+            }
+            else if(state == 9){ //多人模式结束
+                screen.gameOverScreen();
                 mainWindow.repaint();
                 break;
             }
