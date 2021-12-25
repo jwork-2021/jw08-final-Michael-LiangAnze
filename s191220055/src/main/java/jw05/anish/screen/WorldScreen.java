@@ -139,69 +139,8 @@ public class WorldScreen implements Screen {
         }
     }
     private void loadMapFile(boolean isRecord) {
-        try {
             map = new Map(world,isRecord);
-            // System.out.println(isRecord);
             map.loadMap();
-            
-            int mapSize = map.getMapSize();
-            int[][] tempMap = new int[mapSize][mapSize];
-            map.getMapState(tempMap);
-            for (int i = 0; i < mapSize; i++) {
-                for (int j = 0; j < mapSize; j++) {
-                    // 对于地图物件的规定：
-                    // 必须在1~9之间
-                    // 1为石墙
-                    // 2为水
-                    // 3为树1
-                    // 4为门
-                    // 5为树2
-                    // 6为草
-                    // 7为原木
-                    // 8为沙
-                    // 9为帐篷
-                    switch (tempMap[i][j]) {
-                        case 1:
-                            world.put(new MapItem(new Color(220, 220, 220), 177, this.world),
-                                    new Tuple<Integer, Integer>(i, j));
-                            break;
-                        case 2:
-                            world.put(new MapItem(new Color(30, 144, 255), 156, this.world),
-                                    new Tuple<Integer, Integer>(i, j));
-                            break;
-                        case 3:
-                            world.put(new MapItem(AsciiPanel.green, 24, this.world), new Tuple<Integer, Integer>(i, j));
-                            break;
-                        case 4:
-                            world.put(new MapItem(new Color(255, 193, 37), 35, this.world),
-                                    new Tuple<Integer, Integer>(i, j));
-                            break;
-                        case 5:
-                            world.put(new MapItem(AsciiPanel.green, 6, this.world), new Tuple<Integer, Integer>(i, j));
-                            break;
-                        case 6:
-                            world.put(new MapItem(AsciiPanel.green, 231, this.world),
-                                    new Tuple<Integer, Integer>(i, j));
-                            break;
-                        case 7:
-                            world.put(new MapItem(new Color(222, 184, 135), 22, this.world),
-                                    new Tuple<Integer, Integer>(i, j));
-                            break;
-                        case 8:
-                            world.put(new MapItem(new Color(255, 250, 205), 176, this.world),
-                                    new Tuple<Integer, Integer>(i, j));
-                            break;
-                        case 9:
-                            world.put(new MapItem(new Color(139, 69, 19), 65, this.world),
-                                    new Tuple<Integer, Integer>(i, j));
-                            break;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Map file not found\n");
-            System.exit(-1);
-        }
     }
 
     @Override

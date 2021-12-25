@@ -55,13 +55,13 @@ public class Server {
 		this.map = map;
 		this.cannonballList = new CannonballList(1, 600, map, world);
 		cannonballList.setServer(this);
-		playerSourceList.add(new PlayerInfo(new Player(Color.red, 0, 1, 4, world, map, null), id,
+		playerSourceList.add(new PlayerInfo(new Player(Color.red, 0, 1, 8, world, map, null), id,
 				new Tuple<Integer, Integer>(3, 17), Color.red));
-		playerSourceList.add(new PlayerInfo(new Player(Color.green, 0, 1, 4, world, map, null), id,
+		playerSourceList.add(new PlayerInfo(new Player(Color.green, 0, 1, 8, world, map, null), id,
 				new Tuple<Integer, Integer>(4, 17), Color.green));
-		playerSourceList.add(new PlayerInfo(new Player(Color.yellow, 0, 1, 4, world, map, null), id,
+		playerSourceList.add(new PlayerInfo(new Player(Color.yellow, 0, 1, 8, world, map, null), id,
 				new Tuple<Integer, Integer>(5, 17), Color.yellow));
-		playerSourceList.add(new PlayerInfo(new Player(Color.blue, 0, 1, 4, world, map, null), id,
+		playerSourceList.add(new PlayerInfo(new Player(Color.blue, 0, 1, 8, world, map, null), id,
 				new Tuple<Integer, Integer>(6, 17), Color.blue));
 
 		try {
@@ -203,10 +203,8 @@ public class Server {
 				Tuple<Integer, Integer> beginPos = new Tuple<Integer, Integer>(Integer.parseInt(beginPosInfo[0]),
 						Integer.parseInt(beginPosInfo[1]));
 				int directionInfo = Integer.parseInt(infoFromClient[2]);
-				if (cannonballList.addCannonball(beginPos, directionInfo)) {
-					NetInfo ni = new NetInfo("launchCannonball", beginPos, directionInfo);
-					broadcastToAllClient(ni.toString(), this.serverOwnerSocketAddress);
-				}
+				int ownerId = Integer.parseInt(infoFromClient[3]);
+				cannonballList.addCannonball(beginPos, directionInfo,ownerId);
 			}
 				;
 				break;
@@ -307,6 +305,10 @@ public class Server {
 		return socket.getRemoteSocketAddress();
 	}
 
+	public void launchCannonball(NetInfo ni){
+		broadcastToAllClient(ni.toString(), serverOwnerSocketAddress);
+	}
+
 	public void moveCannonball(NetInfo ni) {
 		broadcastToAllClient(ni.toString(), serverOwnerSocketAddress);
 	}
@@ -314,6 +316,11 @@ public class Server {
 	public void gameOver() {
 		this.gaming = false;
 		NetInfo ni = new NetInfo("gameOver");
+		broadcastToAllClient(ni.toString(), null);
+	}
+
+	public void addPlayerScore(int id){
+		NetInfo ni = new NetInfo("addScore",id);
 		broadcastToAllClient(ni.toString(), null);
 	}
 }

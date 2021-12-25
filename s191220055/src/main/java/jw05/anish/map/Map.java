@@ -1,5 +1,6 @@
 package jw05.anish.map;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -10,12 +11,15 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import jw05.anish.algorithm.Tuple;
+import jw05.anish.calabashbros.Cannonball;
 import jw05.anish.calabashbros.Creature;
 import jw05.anish.calabashbros.Floor;
+import jw05.anish.calabashbros.MapItem;
 import jw05.anish.calabashbros.Player;
 import jw05.anish.calabashbros.Thing;
 import jw05.anish.calabashbros.World;
 import jw05.anish.net.Server;
+import jw05.asciiPanel.AsciiPanel;
 
 public class Map {
     private int[][] map;
@@ -50,7 +54,7 @@ public class Map {
         this.creatureList = creatureList;
     }
 
-    public void loadMap() throws IOException {
+    public void loadMap(){
         int i = 0;
         Scanner s = null;
         String str = null;
@@ -64,7 +68,52 @@ public class Map {
                 }
                 i++;
             }
-        } finally {
+            for (i = 0; i < mapSize; i++) {
+                for (int j = 0; j < mapSize; j++) {
+                    switch (map[i][j]) {
+                        case 1://1为石墙
+                            world.put(new MapItem(new Color(220, 220, 220), 177, this.world),
+                                    new Tuple<Integer, Integer>(i, j));
+                            break;
+                        case 2:// 2为水
+                            world.put(new MapItem(new Color(30, 144, 255), 156, this.world),
+                                    new Tuple<Integer, Integer>(i, j));
+                            break;
+                        case 3:// 3为树1
+                            world.put(new MapItem(AsciiPanel.green, 24, this.world), new Tuple<Integer, Integer>(i, j));
+                            break;
+                        case 4:// 4为门
+                            world.put(new MapItem(new Color(255, 193, 37), 35, this.world),
+                                    new Tuple<Integer, Integer>(i, j));
+                            break;
+                        case 5:// 5为树2
+                            world.put(new MapItem(AsciiPanel.green, 6, this.world), new Tuple<Integer, Integer>(i, j));
+                            break;
+                        case 6:// 6为草
+                            world.put(new MapItem(AsciiPanel.green, 231, this.world),
+                                    new Tuple<Integer, Integer>(i, j));
+                            break;
+                        case 7:// 7为原木
+                            world.put(new MapItem(new Color(222, 184, 135), 22, this.world),
+                                    new Tuple<Integer, Integer>(i, j));
+                            break;
+                        case 8:// 8为沙
+                            world.put(new MapItem(new Color(255, 250, 205), 176, this.world),
+                                    new Tuple<Integer, Integer>(i, j));
+                            break;
+                        case 9:// 9为帐篷
+                            world.put(new MapItem(new Color(139, 69, 19), 65, this.world),
+                                    new Tuple<Integer, Integer>(i, j));
+                            break;
+                    }
+                }
+            }
+        }
+        catch(IOException e){
+            System.err.println("Map file not found\n");
+            System.exit(-1);
+        } 
+        finally {
             if (s != null) {
                 s.close();
             }
@@ -106,7 +155,8 @@ public class Map {
     public synchronized boolean moveThing(Tuple<Integer, Integer> beginPos, Tuple<Integer, Integer> destPos) {
         boolean res = false;
         lock.lock();
-        String type = world.get(beginPos.first, beginPos.second).getType(); // 获取移动物品的类型
+        Thing t = world.get(beginPos.first, beginPos.second);
+        String type = t.getType();
         if (recoreder != null) { // 确定录像
             recoreder.AddMoveThingInfo(world.get(beginPos.first, beginPos.second).getId(), type, beginPos, destPos, -1);
         }
@@ -126,6 +176,10 @@ public class Map {
                     tempPos = creatureList.get(i).getPos();
                     if (destPos.first == tempPos.first && destPos.second == tempPos.second) {
                         creatureList.get(i).beAttack(1);
+                        if(server != null){
+                            Cannonball c = (Cannonball)t;
+                            server.addPlayerScore(c.getOwner());
+                        }
                         if (creatureList.get(i).getHp() <= 0) { // 被攻击生物死亡
                             cleanBlock(tempPos); // 清理格子
                             map[tempPos.first][tempPos.second] = 0;// 清空坐标
@@ -212,6 +266,10 @@ public class Map {
                     tempPos = creatureList.get(i).getPos();
                     if (pos.first == tempPos.first && pos.second == tempPos.second) {
                         creatureList.get(i).beAttack(1);
+                        if(server != null){
+                            Cannonball c = (Cannonball)t;
+                            server.addPlayerScore(c.getOwner());
+                        }
                         if (creatureList.get(i).getHp() <= 0) {
                             cleanBlock(tempPos);
                             map[tempPos.first][tempPos.second] = 0;// 清空坐标

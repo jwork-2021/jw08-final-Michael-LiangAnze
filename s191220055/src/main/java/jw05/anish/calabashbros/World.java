@@ -9,7 +9,7 @@ import jw05.anish.algorithm.Tuple;
 public class World {
 
     public static final int WIDTH = 40;
-    public static final int HEIGHT = WIDTH + 5;
+    public static final int HEIGHT = WIDTH + 6;
     public final int hpStartX = 10;
     public final int hpStartY = WIDTH;
     public final int scoreStartX = hpStartX + 17;
@@ -113,24 +113,16 @@ public class World {
     }
 
     public void setPlayerInfo(int hp, int score) {
-        tiles[transformX(hpStartX)][transformY(0)]
-                .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'H'));
-        tiles[transformX(hpStartX + 1)][transformY(0)]
-                .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'P'));
-        tiles[transformX(hpStartX + 2)][transformY(0)]
-                .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) ':'));
-        tiles[transformX(scoreStartX)][transformY(0)]
-                .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'S'));
-        tiles[transformX(scoreStartX + 1)][transformY(0)]
-                .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'C'));
-        tiles[transformX(scoreStartX + 2)][transformY(0)]
-                .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'O'));
-        tiles[transformX(scoreStartX + 3)][transformY(0)]
-                .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'R'));
-        tiles[transformX(scoreStartX + 4)][transformY(0)]
-                .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'E'));
-        tiles[transformX(scoreStartX + 5)][transformY(0)]
-                .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) ':'));
+        String hpLine = "HP:",scoreLine = "SCORE:";
+        for(int j = 0;j < hpLine.length();j++){
+            tiles[transformX(hpStartX+j)][transformY(0)]
+                .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int)hpLine.charAt(j)));
+        }
+        
+        for(int j = 0;j < scoreLine.length();j++){
+            tiles[transformX(scoreStartX+j)][transformY(0)]
+                .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int)scoreLine.charAt(j)));
+        }
         updateInfo(hp, score);
     }
 
@@ -163,12 +155,17 @@ public class World {
 
     }
 
+    private final int idInfo2BeginX = 0;
+    private final int idInfo2BeginY = WIDTH;
+
+
     private final int otherInfo1BeginX = 3;
-    private final int otherInfo1BeginY = WIDTH + 4;
+    private final int otherInfo1BeginY = WIDTH + 5;
 
     private final int otherInfo2BeginX = 20;
-    private final int otherInfo2BeginY = WIDTH + 4;
+    private final int otherInfo2BeginY = WIDTH + 5;
 
+   
     String otherInfo1;
     String otherInfo2;
 
@@ -176,26 +173,33 @@ public class World {
         for (int i = 0; i < playerList.size(); ++i) {
             int tempHp = playerList.get(i).getHp();
             int tempScore = playerList.get(i).getScore();
-
+            int id = playerList.get(i).getId();
+            Color color = playerList.get(i).getColor();
+            String showIdLine = "Player",selfIdLine = "     YOU:";
+            if(id != selfId){
+                showIdLine += " "+id+":";
+                for(int j = 0;j < showIdLine.length();j++){
+                    tiles[idInfo2BeginX+j][idInfo2BeginY + i]
+                        .setThing(new ScreenInfo(this, color, (int)showIdLine.charAt(j)));
+                }
+            }
+            else{
+                for(int j = 0;j < selfIdLine.length();j++){
+                    tiles[idInfo2BeginX+j][idInfo2BeginY + i]
+                        .setThing(new ScreenInfo(this, color, (int)selfIdLine.charAt(j)));
+                }
+            }
             // non-data
-            tiles[transformX(hpStartX)][transformY(0) + i]
-                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'H'));
-            tiles[transformX(hpStartX + 1)][transformY(0) + i]
-                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'P'));
-            tiles[transformX(hpStartX + 2)][transformY(0) + i]
-                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) ':'));
-            tiles[transformX(scoreStartX)][transformY(0) + i]
-                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'S'));
-            tiles[transformX(scoreStartX + 1)][transformY(0) + i]
-                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'C'));
-            tiles[transformX(scoreStartX + 2)][transformY(0) + i]
-                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'O'));
-            tiles[transformX(scoreStartX + 3)][transformY(0) + i]
-                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'R'));
-            tiles[transformX(scoreStartX + 4)][transformY(0) + i]
-                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) 'E'));
-            tiles[transformX(scoreStartX + 5)][transformY(0) + i]
-                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) ':'));
+            String hpLine = "HP:",scoreLine = "SCORE:";
+            for(int j = 0;j < hpLine.length();j++){
+                tiles[transformX(hpStartX+j)][transformY(0) + i]
+                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int)hpLine.charAt(j)));
+            }
+            
+            for(int j = 0;j < scoreLine.length();j++){
+                tiles[transformX(scoreStartX+j)][transformY(0) + i]
+                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int)scoreLine.charAt(j)));
+            }
 
             // data
             for (int j = hpStartX + 3; j < scoreStartX; ++j) {

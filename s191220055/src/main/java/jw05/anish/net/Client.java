@@ -28,7 +28,6 @@ public class Client {
 
     private SocketChannel client;
     private InetSocketAddress serverAddress;
-    private Selector selector = null;
     private ByteBuffer readBuffer = ByteBuffer.allocate(1024);
     private ByteBuffer writeBuffer = ByteBuffer.allocate(1024);
     private Boolean connect = false;// 是否连接了服务器
@@ -43,6 +42,10 @@ public class Client {
     private Color playerColor = null;
     private Player player = null;
     private int playerDirection = 1;
+
+    // control
+    private long lastMoveTime = -1;
+    private long lastShootTime = -1;
 
     // 状态与world中的一致
     // 状态6：多人游戏等待玩家界面（服务器对应的玩家
@@ -118,8 +121,8 @@ public class Client {
                         Integer.parseInt(colorInfo[2]));
                 switch (itemType) {
                     case "player": {
-                        Player tempPlayer = new Player(tempColor, 0, 100, 4, world, map, null);
-                        // tempPlayer.setId(tempId);
+                        Player tempPlayer = new Player(tempColor, 0, 100, 8, world, map, null);
+                        tempPlayer.setId(tempId);
                         map.setThing(pos, 1, tempPlayer);
                         creatureList.add(tempPlayer);
                         playerList.add(tempPlayer);
@@ -157,18 +160,32 @@ public class Client {
                 playerPos = new Tuple<Integer, Integer>(Integer.parseInt(posInfo[0]), Integer.parseInt(posInfo[1]));
                 playerColor = new Color(Integer.parseInt(colorInfo[0]), Integer.parseInt(colorInfo[1]),
                         Integer.parseInt(colorInfo[2]));
-                player = new Player(playerColor, 0, 1, 4, world, map, null);
+                player = new Player(playerColor, 0, 1, 8, world, map, null);
+                int id = Integer.parseInt(infoFromServer[1]);
+                player.setId(id);
                 joinInGame = true;
                 map.setThing(playerPos, 1, player);
                 creatureList.add(player);
                 playerList.add(player);
-                world.updateOnlineGamingInfo(playerList,  -1);
+                world.updateOnlineGamingInfo(playerList,  id);
+                world.setOtherInfo1("State:waiting to start...");
             }
                 ;
                 break;
+            case "addScore":{
+                int id = Integer.parseInt(infoFromServer[1]);
+                for(Player p:playerList){
+                    if(p.getId() == id){
+                        p.addScore();
+                        world.updateOnlineGamingInfo(playerList, player.getId());
+                        break;
+                    }
+                }
+            };break;
             case "startGame": {
                 world.setWorldState(8);
                 // System.out.println(world.getWorldState());
+                world.setOtherInfo1("State:Gaming");
             }
                 ;
                 break;
@@ -200,12 +217,16 @@ public class Client {
                 ;
                 break;
             case 8: {// clinet
-                // System.out.print("sent move");
+                
                 NetInfo n;
                 switch (key.getKeyCode()) {
                     case KeyEvent.VK_UP:
                     case KeyEvent.VK_W: {
                         playerDirection = 1;
+                        if(System.currentTimeMillis() - lastMoveTime < 50){
+                            break;
+                        }
+                        lastMoveTime = System.currentTimeMillis();
                         n = new NetInfo("moveThing", playerPos,
                                 new Tuple<Integer, Integer>(playerPos.first, playerPos.second - 1));
                         this.writeToServer(n.toString());
@@ -215,6 +236,10 @@ public class Client {
                     case KeyEvent.VK_DOWN:
                     case KeyEvent.VK_S: {
                         playerDirection = 2;
+                        if(System.currentTimeMillis() - lastMoveTime < 50){
+                            break;
+                        }
+                        lastMoveTime = System.currentTimeMillis();
                         n = new NetInfo("moveThing", playerPos,
                                 new Tuple<Integer, Integer>(playerPos.first, playerPos.second + 1));
                         this.writeToServer(n.toString());
@@ -224,6 +249,10 @@ public class Client {
                     case KeyEvent.VK_LEFT:
                     case KeyEvent.VK_A: {
                         playerDirection = 3;
+                        if(System.currentTimeMillis() - lastMoveTime < 50){
+                            break;
+                        }
+                        lastMoveTime = System.currentTimeMillis();
                         n = new NetInfo("moveThing", playerPos,
                                 new Tuple<Integer, Integer>(playerPos.first - 1, playerPos.second));
                         this.writeToServer(n.toString());
@@ -233,6 +262,10 @@ public class Client {
                     case KeyEvent.VK_RIGHT:
                     case KeyEvent.VK_D: {
                         playerDirection = 4;
+                        if(System.currentTimeMillis() - lastMoveTime < 50){
+                            break;
+                        }
+                        lastMoveTime = System.currentTimeMillis();
                         n = new NetInfo("moveThing", playerPos,
                                 new Tuple<Integer, Integer>(playerPos.first + 1, playerPos.second));
                         this.writeToServer(n.toString());
@@ -241,29 +274,33 @@ public class Client {
                         break;
                     case KeyEvent.VK_SPACE:
                         // this.writeToServer("SPACE");
+                        if(System.currentTimeMillis() - lastShootTime < 400){
+                            break;
+                        }
+                        lastShootTime = System.currentTimeMillis();
                         switch (playerDirection) {
                             case 1:
                                 n = new NetInfo("launchCannonball",
                                         new Tuple<Integer, Integer>(playerPos.first, playerPos.second - 1),
-                                        2);
+                                        2,this.player.getId());
                                 this.writeToServer(n.toString());
                                 break;
                             case 2:
                                 n = new NetInfo("launchCannonball",
                                         new Tuple<Integer, Integer>(playerPos.first, playerPos.second + 1),
-                                        1);
+                                        1,this.player.getId());
                                 this.writeToServer(n.toString());
                                 break;
                             case 3:
                                 n = new NetInfo("launchCannonball",
                                         new Tuple<Integer, Integer>(playerPos.first - 1, playerPos.second),
-                                        playerDirection);
+                                        playerDirection,this.player.getId());
                                 this.writeToServer(n.toString());
                                 break;
                             case 4:
                                 n = new NetInfo("launchCannonball",
                                         new Tuple<Integer, Integer>(playerPos.first + 1, playerPos.second),
-                                        playerDirection);
+                                        playerDirection,this.player.getId());
                                 this.writeToServer(n.toString());
                                 break;
                         }

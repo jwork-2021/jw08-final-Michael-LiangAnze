@@ -31,17 +31,25 @@ public class CannonballList implements Runnable {
         this.server = s;
     }
 
-    public boolean addCannonball(Tuple<Integer, Integer> cannonPos, int direction) {
-        boolean res = false;
+    public void addCannonball(Tuple<Integer, Integer> cannonPos, int direction) {
         lock.lock();
         Cannonball temp = new Cannonball(direction, damage, world);
         if (map.setThing(cannonPos, 1, temp)) {
             cannonballList.add(temp);
-            res = true;
         }
         lock.unlock();
-        return res;
-    }
+    }  
+    public void addCannonball(Tuple<Integer, Integer> cannonPos, int direction,int ownerId) { // for online game
+        lock.lock();
+        Cannonball temp = new Cannonball(direction, damage, world);
+        if (map.setThing(cannonPos, 1, temp)) {
+            cannonballList.add(temp);
+        }
+        // System.out.println(cannonballList.size());
+        NetInfo ni = new NetInfo("launchCannonball", cannonPos, direction,ownerId);
+        server.launchCannonball(ni);
+        lock.unlock();
+    } 
 
     public int getDamage() {
         return damage;
@@ -69,7 +77,8 @@ public class CannonballList implements Runnable {
                 case 2: {
                     nextPos = new Tuple<Integer, Integer>(curPos.first, curPos.second - 1);
                     if(server != null){
-                        
+                        NetInfo ni = new NetInfo("moveThing",curPos,nextPos);
+                        server.moveCannonball(ni);
                     }
                     if (!map.moveThing(curPos, nextPos)) {
                         removeList.add(c);

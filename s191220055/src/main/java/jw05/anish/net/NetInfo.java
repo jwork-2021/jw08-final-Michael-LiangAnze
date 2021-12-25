@@ -35,11 +35,12 @@ public class NetInfo {
     }
 
     //发射炮弹launchCannonball
-    public NetInfo(String actionType,Tuple<Integer, Integer> beginPos,int direction){
+    public NetInfo(String actionType,Tuple<Integer, Integer> beginPos,int direction,int ownerId){
         this.actionType = actionType;
         // this.itemType = itemType;
         this.beginPos = beginPos;
         this.direction = direction;
+        this.id = ownerId;
     }
 
     //获准加入admitToJoin 
@@ -53,6 +54,12 @@ public class NetInfo {
     // 玩家加入playerJoin / 请求开始游戏startGameRequest / 开始游戏startGame / 游戏结束gameOver
     public NetInfo(String actionType) { 
         this.actionType = actionType;
+    }
+
+    //玩家加分
+    public NetInfo(String actionType,int id){
+        this.actionType = actionType;
+        this.id = id;
     }
 
     public void Output() {
@@ -80,7 +87,8 @@ public class NetInfo {
             case "launchCannonball":{
                 line = String.valueOf("launchCannonball") + ' ' +
                         String.valueOf(beginPos.first) + ',' + String.valueOf(beginPos.second) + ' ' +
-                        String.valueOf(direction);
+                        String.valueOf(direction)+ ' ' +
+                        String.valueOf(id);
             };break;
             
             case "admitToJoin":{
@@ -90,6 +98,10 @@ public class NetInfo {
                         String.valueOf(this.color.getRed()) + ',' + String.valueOf(this.color.getGreen()) + ','
                         + String.valueOf(this.color.getBlue());
                         
+            };break;
+            case "addScore":{
+                line = String.valueOf("addScore") + ' ' +
+                        String.valueOf(id);
             };break;
             case "playerJoin":
             case "startGame":

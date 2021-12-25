@@ -75,6 +75,10 @@ public class Player extends Creature implements Runnable {
         return this.rank;
     }
 
+    public void addScore(){
+        this.score++;
+    }
+    
     public int getScore(){
         return this.score;
     }
