@@ -24,12 +24,12 @@ public class Main extends JFrame implements KeyListener {
         // String[]myargs = {};
         // String[]myargs = {"-record"};
         // String[]myargs = {"-demo","demo-1640168085000.txt"};
-        String[]myargs = {"-online","123"};
+        // String[]myargs = {"-online","localhost"};
         // String[]myargs = {"-online","-server"};
         terminal = new AsciiPanel(World.WIDTH, World.HEIGHT, AsciiFont.Guybrush_square_16x16); 
         add(terminal);
         pack();
-        screen = new WorldScreen(myargs);
+        screen = new WorldScreen(args);
         Thread t = new Thread(new RefreshScreen(this,screen));
         addKeyListener(this);
         t.start();  

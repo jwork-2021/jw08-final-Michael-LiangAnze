@@ -41,7 +41,7 @@ public class CannonballList implements Runnable {
     }  
     public void addCannonball(Tuple<Integer, Integer> cannonPos, int direction,int ownerId) { // for online game
         lock.lock();
-        Cannonball temp = new Cannonball(direction, damage, world);
+        Cannonball temp = new Cannonball(direction, damage, world,ownerId);
         if (map.setThing(cannonPos, 1, temp)) {
             cannonballList.add(temp);
         }

@@ -99,14 +99,16 @@ public class NetInfo {
                         + String.valueOf(this.color.getBlue());
                         
             };break;
-            case "addScore":{
-                line = String.valueOf("addScore") + ' ' +
+            case "addScore":
+            case "playerLeave":{
+                line = this.actionType + ' ' +
                         String.valueOf(id);
             };break;
             case "playerJoin":
             case "startGame":
             case "startGameRequest":
-            case "gameOver":{
+            case "gameOver":
+            case "resetGame":{
                 line = String.valueOf(actionType);
             };break;
         }

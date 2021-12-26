@@ -8,13 +8,16 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.nio.channels.UnresolvedAddressException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import jw05.anish.algorithm.Tuple;
 import jw05.anish.calabashbros.Cannonball;
 import jw05.anish.calabashbros.Creature;
+import jw05.anish.calabashbros.Floor;
 import jw05.anish.calabashbros.Player;
 import jw05.anish.calabashbros.World;
 import jw05.anish.map.Map;
@@ -36,6 +39,7 @@ public class Client {
 
     private ArrayList<Player> playerList = new ArrayList<Player>();
     private ArrayList<Creature> creatureList = new ArrayList<Creature>();
+    private HashMap<Integer,Tuple<Integer,Integer>>originalPos = new HashMap<Integer,Tuple<Integer,Integer>>();
 
     // player info
     private Tuple<Integer, Integer> playerPos = null;
@@ -73,7 +77,11 @@ public class Client {
             connect = true;
             // 监听服务器
             startReadFromServer();
-        } catch (ConnectException e) {
+        } 
+        catch(UnresolvedAddressException e){
+            System.out.println("fail to connect to:" + serverAddress.toString());
+        }
+        catch (ConnectException e) {
             System.out.println("fail to connect to:" + serverAddress.toString());
         } catch (IOException e) {
             System.out.println("server had been shut down");
@@ -95,8 +103,10 @@ public class Client {
                     Tuple<Integer, Integer> pos = new Tuple<Integer, Integer>(Integer.parseInt(posInfo[0]),
                         Integer.parseInt(posInfo[1]));
                     int directionInfo = Integer.parseInt(infoFromServer[2]);
-                    Cannonball c = new Cannonball(directionInfo, 1, world);
+                    int ownerId = Integer.parseInt(infoFromServer[3]);
+                    Cannonball c = new Cannonball(directionInfo, 1, world,ownerId);
                     map.setThing(pos, 1, c);
+                    world.updateOnlineGamingInfo(playerList, this.player.getId());
                 }
                     ;
                     break;
@@ -127,6 +137,8 @@ public class Client {
                         creatureList.add(tempPlayer);
                         playerList.add(tempPlayer);
                         world.updateOnlineGamingInfo(playerList, this.player.getId());
+
+                        originalPos.put(tempPlayer.getId(), pos);
                     }
                 }
             }
@@ -162,16 +174,40 @@ public class Client {
                         Integer.parseInt(colorInfo[2]));
                 player = new Player(playerColor, 0, 1, 8, world, map, null);
                 int id = Integer.parseInt(infoFromServer[1]);
-                player.setId(id);
                 joinInGame = true;
                 map.setThing(playerPos, 1, player);
+                player.setId(id);
                 creatureList.add(player);
                 playerList.add(player);
+                originalPos.put(player.getId(), playerPos);
+                if(!isServerOwner){
+                    world.setOtherInfo("STATE:WAITING TO START...");
+                }
+                else{
+                    world.setOtherInfo("PRESS ENTER TO START GAME");
+                }
                 world.updateOnlineGamingInfo(playerList,  id);
-                world.setOtherInfo1("State:waiting to start...");
             }
                 ;
                 break;
+            case "playerLeave":{
+                int id = Integer.parseInt(infoFromServer[1]);
+                for(Player p:playerList){
+                    if(p.getId() == id){
+                        map.setThing(p.getPos(), 0, new Floor(world));
+                        playerList.remove(p);
+                        break;
+                    }
+                }
+                // 
+                for(Creature c:creatureList){
+                    if(c.getId() == id){
+                        creatureList.remove(c);
+                        break;
+                    }
+                }
+                world.updateOnlineGamingInfo(playerList, player.getId());
+            };break;
             case "addScore":{
                 int id = Integer.parseInt(infoFromServer[1]);
                 for(Player p:playerList){
@@ -185,12 +221,46 @@ public class Client {
             case "startGame": {
                 world.setWorldState(8);
                 // System.out.println(world.getWorldState());
-                world.setOtherInfo1("State:Gaming");
+                world.setOtherInfo("STATE:GAMING");
+                world.updateOnlineGamingInfo(playerList, player.getId());
             }
                 ;
                 break;
             case "gameOver":{
+                world.setOtherInfo("STATE:GAME OVER");
+                world.updateOnlineGamingInfo(playerList, player.getId());
                 world.setWorldState(9);
+            };break;
+            case "resetGame":{
+                world.setGamingWorld();
+                if(isServerOwner){
+                    world.setWorldState(6);
+                }
+                else{
+                    world.setWorldState(7);
+                }
+                // System.out.print("in");
+                map.loadMap();
+                playerDirection = 1;
+                playerPos = originalPos.get(player.getId());
+                map.setThing(playerPos, 1, player);
+                for(Player p:playerList){
+                    if(p.getId() != player.getId()){
+                        map.setThing(originalPos.get(p.getId()), 1, p);
+                    }
+                    if(!creatureList.contains(((Creature)p))){
+                        creatureList.add(p);
+                    }
+                    // for(Creature)
+                    p.setInfo(8, 0);
+                }
+                if(!isServerOwner){
+                    world.setOtherInfo("STATE:WAITING TO START...");
+                }
+                else{
+                    world.setOtherInfo("PRESS ENTER TO START GAME");
+                }
+                world.updateOnlineGamingInfo(playerList, player.getId());
             };break;
         }
     }
@@ -380,7 +450,10 @@ public class Client {
                             handleInputFromServer(line.split(" "));
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        // e.printStackTrace();
+                        world.setOtherInfo("FAIL TO CONNECT TO SERVER");
+                        System.out.println("fail to connect to:"+serverAddress.toString());
+                        world.updateOnlineGamingInfo(playerList, player.getId());
                         connect = false;
                     }
                 }

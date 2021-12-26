@@ -56,13 +56,13 @@ public class Server {
 		this.cannonballList = new CannonballList(1, 600, map, world);
 		cannonballList.setServer(this);
 		playerSourceList.add(new PlayerInfo(new Player(Color.red, 0, 1, 8, world, map, null), id,
-				new Tuple<Integer, Integer>(3, 17), Color.red));
+				new Tuple<Integer, Integer>(3, 17), Color.red,null));
 		playerSourceList.add(new PlayerInfo(new Player(Color.green, 0, 1, 8, world, map, null), id,
-				new Tuple<Integer, Integer>(4, 17), Color.green));
+				new Tuple<Integer, Integer>(4, 17), Color.green,null));
 		playerSourceList.add(new PlayerInfo(new Player(Color.yellow, 0, 1, 8, world, map, null), id,
-				new Tuple<Integer, Integer>(5, 17), Color.yellow));
+				new Tuple<Integer, Integer>(5, 17), Color.yellow,null));
 		playerSourceList.add(new PlayerInfo(new Player(Color.blue, 0, 1, 8, world, map, null), id,
-				new Tuple<Integer, Integer>(6, 17), Color.blue));
+				new Tuple<Integer, Integer>(6, 17), Color.blue,null));
 
 		try {
 			startServer();
@@ -147,7 +147,17 @@ public class Server {
 		try {
 			numRead = channel.read(readBuffer);
 		} catch (SocketException e) {
-			System.out.println("fail to read");
+			System.out.println("server:player from:"+getSocketAddress(key)+" left server");
+			for(PlayerInfo pi:playerSourceList){
+				if(pi.playerAddress == getSocketAddress(key)){
+					pi.isAsssign = false;
+					pi.playerAddress = null;
+					this.playerNum--;
+					NetInfo ni = new NetInfo("playerLeave",pi.id);
+					broadcastToAllClient(ni.toString(), getSocketAddress(key));
+					break;
+				}
+			}
 		}
 
 		if (numRead == -1) {
@@ -204,6 +214,7 @@ public class Server {
 						Integer.parseInt(beginPosInfo[1]));
 				int directionInfo = Integer.parseInt(infoFromClient[2]);
 				int ownerId = Integer.parseInt(infoFromClient[3]);
+				// System.out.println(ownerId);
 				cannonballList.addCannonball(beginPos, directionInfo,ownerId);
 			}
 				;
@@ -212,6 +223,7 @@ public class Server {
 				if (playerNum < 4) { // allow
 					// assign info
 					PlayerInfo i = getAvailablePlayer();
+					i.playerAddress = getSocketAddress(key);
 					// world.put(i.player, i.pos); 留给服务器对应的client来设置
 					playerNum++;
 					// attention:send other players in playerList to this client using "setThing",
@@ -317,6 +329,36 @@ public class Server {
 		this.gaming = false;
 		NetInfo ni = new NetInfo("gameOver");
 		broadcastToAllClient(ni.toString(), null);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try{
+					Thread.sleep(2000);
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
+				NetInfo ni = new NetInfo("resetGame");
+				broadcastToAllClient(ni.toString(), null);
+				// for(PlayerInfo pi:playerSourceList){
+				// 	if(pi.isAsssign){
+				// 		for(SelectionKey key:selector.keys()){
+				// 			if(getSocketAddress(key) == pi.playerAddress){
+				// 				ni = new NetInfo("admitToJoin", pi.id, pi.pos, pi.color);
+				// 				write(key, ni.toString());
+				// 				for(PlayerInfo pi_:playerSourceList){
+				// 					if(pi_.id != pi.id && pi_.isAsssign){
+				// 						ni = new NetInfo("setThing", "player", pi_.id, pi_.pos, (int) pi_.player.getGlyph(),pi_.color);
+				// 						write(key, ni.toString());
+				// 					}
+				// 				}
+				// 				break;
+				// 			}
+				// 		}
+				// 	}
+				// }
+			}
+		}).start();
 	}
 
 	public void addPlayerScore(int id){

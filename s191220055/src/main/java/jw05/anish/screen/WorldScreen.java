@@ -79,7 +79,7 @@ public class WorldScreen implements Screen {
             if(!clientOrServer){ //客户端
                 world.setWorldState(7);
                 onlineGameScreen();
-                this.client = new Client("localhost",port,false,world, map);
+                this.client = new Client(ip,port,false,world, map);
                 // System.out.println("start game as client");
             }
             else{ // 服务器端
@@ -295,30 +295,30 @@ public class WorldScreen implements Screen {
 
     @Override
     public Screen respondToUserInput(KeyEvent key) {
-        // if (world.getWorldState() == 0) { // 开始界面
-        //     if (key.getKeyCode() == KeyEvent.VK_ENTER) {
-        //         world.setWorldState(1);
-        //         gamingScreen();
-        //     }
-        // } else if (world.getWorldState() == 1) {
-        //     switch (key.getKeyCode()) {
-        //         case KeyEvent.VK_W:
-        //             player.movePlayer(2);
-        //             break;
-        //         case KeyEvent.VK_S:
-        //             player.movePlayer(1);
-        //             break;
-        //         case KeyEvent.VK_A:
-        //             player.movePlayer(3);
-        //             break;
-        //         case KeyEvent.VK_D:
-        //             player.movePlayer(4);
-        //             break;
-        //         case KeyEvent.VK_SPACE:
-        //             player.setAttackState();
-        //     }
-        // }
-        if(world.getWorldState() > 5){
+        if (world.getWorldState() == 0) { // 开始界面
+            if (key.getKeyCode() == KeyEvent.VK_ENTER) {
+                world.setWorldState(1);
+                standAloneGameScreen();
+            }
+        } else if (world.getWorldState() == 1) {
+            switch (key.getKeyCode()) {
+                case KeyEvent.VK_W:
+                    player.movePlayer(2);
+                    break;
+                case KeyEvent.VK_S:
+                    player.movePlayer(1);
+                    break;
+                case KeyEvent.VK_A:
+                    player.movePlayer(3);
+                    break;
+                case KeyEvent.VK_D:
+                    player.movePlayer(4);
+                    break;
+                case KeyEvent.VK_SPACE:
+                    player.setAttackState();
+            }
+        }
+        else if(world.getWorldState() > 5){
             this.client.handleKeyEvent(key);
         }
         

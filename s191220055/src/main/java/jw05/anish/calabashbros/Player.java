@@ -37,6 +37,10 @@ public class Player extends Creature implements Runnable {
         this.type = "player";
     }
 
+    public void setInfo(int hp,int score){
+        this.hp = hp;
+        this.score = score;
+    }
     public void setAttackState() {
         this.attackState = true;
     }

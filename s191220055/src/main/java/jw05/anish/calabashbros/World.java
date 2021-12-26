@@ -162,14 +162,16 @@ public class World {
     private final int otherInfo1BeginX = 3;
     private final int otherInfo1BeginY = WIDTH + 5;
 
-    private final int otherInfo2BeginX = 20;
-    private final int otherInfo2BeginY = WIDTH + 5;
-
    
-    String otherInfo1;
-    String otherInfo2;
+    String otherInfo;
 
     public void updateOnlineGamingInfo(ArrayList<Player> playerList, int selfId) {
+        for(int i = 0;i<WIDTH;i++){
+            for(int j = WIDTH;j < WIDTH+6; j++){
+                tiles[i][j]
+                        .setThing(new ScreenInfo(this,  new Color(0, 0, 0), 0));
+            }
+        }
         for (int i = 0; i < playerList.size(); ++i) {
             int tempHp = playerList.get(i).getHp();
             int tempScore = playerList.get(i).getScore();
@@ -218,38 +220,26 @@ public class World {
                 tiles[transformX(scoreStartX + 7)][transformY(0) + i]
                         .setThing(new ScreenInfo(this, new Color(30, 30, 240), (int) '0'));
             } else {
-                if (num1 != 0) {
-                    tiles[transformX(scoreStartX + 7)][transformY(0) + i]
-                            .setThing(new ScreenInfo(this, new Color(30, 30, 240), (int) '0' + num1));
-                }
-                if (num2 != 0) {
+                tiles[transformX(scoreStartX + 7)][transformY(0) + i]
+                        .setThing(new ScreenInfo(this, new Color(30, 30, 240), (int) '0' + num1));
+                if(num2 != 0){
                     tiles[transformX(scoreStartX + 6)][transformY(0) + i]
-                            .setThing(new ScreenInfo(this, new Color(30, 30, 240), (int) '0' + num2));
+                        .setThing(new ScreenInfo(this, new Color(30, 30, 240), (int) '0' + num2));
                 }
             }
         }
         // other info
-        if (otherInfo1 != null) {
-            for (int i = 0; i < otherInfo1.length(); ++i) {
+        // System.out.println(otherInfo);
+        if (otherInfo != null) {
+            for (int i = 0; i < otherInfo.length(); ++i) {
                 tiles[otherInfo1BeginX + i][otherInfo1BeginY]
-                        .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) otherInfo1.charAt(i)));
+                        .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) otherInfo.charAt(i)));
             }
         }
-        if (otherInfo2 != null) {
-            for (int i = 0; i < otherInfo2.length(); ++i) {
-                tiles[otherInfo2BeginX + i][otherInfo2BeginY]
-                        .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) otherInfo2.charAt(i)));
-            }
-        }
-
     }
 
-    public void setOtherInfo1(String s) {
-        this.otherInfo1 = s;
-    }
-
-    public void setOtherInfo2(String s) {
-        this.otherInfo2 = s;
+    public void setOtherInfo(String s) {
+        this.otherInfo = s;
     }
 
     public int getWorldSize() {

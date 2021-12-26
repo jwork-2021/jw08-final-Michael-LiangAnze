@@ -46,76 +46,51 @@ public class Map {
         this.server = s;
     }
     
-    public String getMapFile() {
-        return this.mapFile;
-    }
 
     public void setCreatureList(ArrayList<Creature> creatureList) {
         this.creatureList = creatureList;
     }
 
     public void loadMap(){
-        int i = 0;
-        Scanner s = null;
-        String str = null;
-        try {
-            s = new Scanner(new BufferedReader(new FileReader(mapFile)));
-            while (s.hasNextLine()) {
-                str = s.nextLine();
-                String[] line = str.split(" ");
-                for (int j = 0; j < mapSize; ++j) {
-                    map[j][i] = Integer.parseInt(line[j]);
+        map = new MapData().getData();
+        for (int i = 0; i < mapSize; i++) {
+            for (int j = 0; j < mapSize; j++) {
+                switch (map[i][j]) {
+                    case 1://1为石墙
+                        world.put(new MapItem(new Color(220, 220, 220), 177, this.world),
+                                new Tuple<Integer, Integer>(i, j));
+                        break;
+                    case 2:// 2为水
+                        world.put(new MapItem(new Color(30, 144, 255), 156, this.world),
+                                new Tuple<Integer, Integer>(i, j));
+                        break;
+                    case 3:// 3为树1
+                        world.put(new MapItem(AsciiPanel.green, 24, this.world), new Tuple<Integer, Integer>(i, j));
+                        break;
+                    case 4:// 4为门
+                        world.put(new MapItem(new Color(255, 193, 37), 35, this.world),
+                                new Tuple<Integer, Integer>(i, j));
+                        break;
+                    case 5:// 5为树2
+                        world.put(new MapItem(AsciiPanel.green, 6, this.world), new Tuple<Integer, Integer>(i, j));
+                        break;
+                    case 6:// 6为草
+                        world.put(new MapItem(AsciiPanel.green, 231, this.world),
+                                new Tuple<Integer, Integer>(i, j));
+                        break;
+                    case 7:// 7为原木
+                        world.put(new MapItem(new Color(222, 184, 135), 22, this.world),
+                                new Tuple<Integer, Integer>(i, j));
+                        break;
+                    case 8:// 8为沙
+                        world.put(new MapItem(new Color(255, 250, 205), 176, this.world),
+                                new Tuple<Integer, Integer>(i, j));
+                        break;
+                    case 9:// 9为帐篷
+                        world.put(new MapItem(new Color(139, 69, 19), 65, this.world),
+                                new Tuple<Integer, Integer>(i, j));
+                        break;
                 }
-                i++;
-            }
-            for (i = 0; i < mapSize; i++) {
-                for (int j = 0; j < mapSize; j++) {
-                    switch (map[i][j]) {
-                        case 1://1为石墙
-                            world.put(new MapItem(new Color(220, 220, 220), 177, this.world),
-                                    new Tuple<Integer, Integer>(i, j));
-                            break;
-                        case 2:// 2为水
-                            world.put(new MapItem(new Color(30, 144, 255), 156, this.world),
-                                    new Tuple<Integer, Integer>(i, j));
-                            break;
-                        case 3:// 3为树1
-                            world.put(new MapItem(AsciiPanel.green, 24, this.world), new Tuple<Integer, Integer>(i, j));
-                            break;
-                        case 4:// 4为门
-                            world.put(new MapItem(new Color(255, 193, 37), 35, this.world),
-                                    new Tuple<Integer, Integer>(i, j));
-                            break;
-                        case 5:// 5为树2
-                            world.put(new MapItem(AsciiPanel.green, 6, this.world), new Tuple<Integer, Integer>(i, j));
-                            break;
-                        case 6:// 6为草
-                            world.put(new MapItem(AsciiPanel.green, 231, this.world),
-                                    new Tuple<Integer, Integer>(i, j));
-                            break;
-                        case 7:// 7为原木
-                            world.put(new MapItem(new Color(222, 184, 135), 22, this.world),
-                                    new Tuple<Integer, Integer>(i, j));
-                            break;
-                        case 8:// 8为沙
-                            world.put(new MapItem(new Color(255, 250, 205), 176, this.world),
-                                    new Tuple<Integer, Integer>(i, j));
-                            break;
-                        case 9:// 9为帐篷
-                            world.put(new MapItem(new Color(139, 69, 19), 65, this.world),
-                                    new Tuple<Integer, Integer>(i, j));
-                            break;
-                    }
-                }
-            }
-        }
-        catch(IOException e){
-            System.err.println("Map file not found\n");
-            System.exit(-1);
-        } 
-        finally {
-            if (s != null) {
-                s.close();
             }
         }
     }
@@ -214,8 +189,9 @@ public class Map {
                             recoreder.saveRecord();
                         }
                     } else { // 多人模式
-                        if (creatureList.size() == 1) {
-                            world.setWorldState(9);
+                        if (creatureList.size() == 1 && server != null) {
+                            // world.setWorldState(9);
+                            server.gameOver();
                         }
 
                     }
@@ -305,8 +281,9 @@ public class Map {
                         }
                     }
                     else{ //多人模式
-                        if (creatureList.size() == 1) {
-                            world.setWorldState(9);
+                        if (creatureList.size() == 1 && server != null) {
+                            // world.setWorldState(9);
+                            server.gameOver();
                         }
                     }
                 }
@@ -315,13 +292,18 @@ public class Map {
                 world.put(t, pos);
                 res = true;
             }
+            else if(world.getWorldState() > 5 && t.getType().equals("floor")){ //线上模式，玩家离开
+                map[pos.first][pos.second] = type;
+                world.put(t, pos);
+                res = true;
+            }
         }
 
-        // 分配id
-        if (res) {
-            t.setId(idCount);
-            idCount++;
-        }
+        // // 分配id
+        // if (res) {
+        //     t.setId(idCount);
+        //     idCount++;
+        // }
         // 记录信息并输出
         if (recoreder != null) {
             recoreder.AddSetThingInfo(-1, t.getType(), pos, null, t.getId(), (int) t.getGlyph(),

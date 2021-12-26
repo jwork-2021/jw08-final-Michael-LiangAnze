@@ -45,13 +45,13 @@ public class RefreshScreen implements Runnable {
             else if(state == 9){ //多人模式结束
                 screen.gameOverScreen();
                 mainWindow.repaint();
-                break;
+                // break;
             }
             else{
                 mainWindow.repaint();
             }
             try {
-                Thread.sleep(100);
+                Thread.sleep(66);
             } catch (InterruptedException e) {
             }
         }
