@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>jw05</groupId>
@@ -16,62 +15,70 @@
     <maven.compiler.target>16</maven.compiler.target>
   </properties>
   <build>
-  	<plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>exec-maven-plugin</artifactId>
-          <executions>
-            <execution>
-              <goals>
-                <goal>java</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <mainClass>main.java.jw05.Main</mainClass>
-          </configuration>
-        </plugin>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <mainClass>main.java.jw05.Main</mainClass>
+        </configuration>
+      </plugin>
 
 
-  		<plugin><!-- 安装exec插件 -->
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>1.2.1</version>
         <configuration>
           <executable>java</executable>
           <arguments>
-            <argument>-DsystemProperty1=value1</argument> <!-- 这是一个系统属性参数 -->
-            <argument>-DsystemProperty2=value2</argument> <!-- 这是一个系统属性参数 -->
-            <argument>-XX:MaxPermSize=256m</argument> <!-- 这是一个JVM参数 -->
-            <!--automatically creates the classpath using all project dependencies, 
-              also adding the project build directory -->
-            <argument>-classpath</argument> <!-- 这是classpath属性，其值就是下面的<classpath/> -->
-            <classpath/> <!-- 这是exec插件最有价值的地方，关于工程的classpath并不需要手动指定，它将由exec自动计算得出 -->
-            <argument>jw05.Main</argument> <!-- 程序入口，主类名称 -->
+            <argument>-DsystemProperty1=value1</argument>
+            <argument>-DsystemProperty2=value2</argument>
+            <argument>-XX:MaxPermSize=256m</argument>
+
+            <argument>-classpath</argument>
+            <classpath />
+            <argument>jw05.Main</argument>
             <argument>-client</argument>
             <argument>localhost</argument>
             <argument>9900</argument>
-            <!-- <argument> </argument> -->
+
           </arguments>
           <mainClass>main.java.jw05.Main</mainClass>
         </configuration>
-	    </plugin>
-
-      <!-- 自动生成主清单列表 -->
-      <plugin> 
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-maven-plugin</artifactId>
-          <executions>
-              <execution>
-                  <goals>
-                      <goal>repackage</goal>
-                  </goals>
-              </execution>
-          </executions>
       </plugin>
 
 
-  	</plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>2.12.2</version>
+        <configuration>
+          <showSuccess>false</showSuccess>
+        </configuration>
+      </plugin>
+
+    </plugins>
   </build>
   <dependencies>
     <dependency>
@@ -81,4 +88,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+
 </project>
