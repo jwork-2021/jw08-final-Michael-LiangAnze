@@ -31,7 +31,7 @@ public class RefreshScreen implements Runnable {
             }
             else if((state == 2 || state == 3) && screen.getThreadPool() != null){ //单人模式游戏结束，且不是demo模式
                 screen.getThreadPool().shutdown(); //关闭开启的线程
-                screen.gameOverScreen();
+                screen.standAloneGameOverScreen();
                 mainWindow.repaint();
                 break;
             }
@@ -42,10 +42,14 @@ public class RefreshScreen implements Runnable {
                 mainWindow.repaint();
                 break;
             }
-            else if(state == 9){ //多人模式结束
-                screen.gameOverScreen();
+            else if(state == 9){ //多人模式结束，且玩家胜利
+                screen.onlineGameWinScreen();
                 mainWindow.repaint();
                 // break;
+            }
+            else if(state == 10){
+                screen.onlineGameLostScreen();
+                mainWindow.repaint();
             }
             else{
                 mainWindow.repaint();

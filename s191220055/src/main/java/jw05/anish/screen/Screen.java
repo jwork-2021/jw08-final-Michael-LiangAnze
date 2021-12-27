@@ -17,7 +17,11 @@ public interface Screen {
 
     public void standAloneGameScreen();
 
-    public void gameOverScreen();
+    public void standAloneGameOverScreen();
+
+    public void onlineGameWinScreen();
+
+    public void onlineGameLostScreen();
 
     public int getScreenState();
 

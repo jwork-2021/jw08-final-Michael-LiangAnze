@@ -82,7 +82,7 @@ public class World {
 
     }
 
-    public void setGameOverWorld() {
+    public void setStandAloneGameOverWorld() {
         String info1 = " YOU WIN ";
         String info2 = "GAME OVER";
         for (int i = gameOverInfoX - 1; i <= gameOverInfoX + 9; i++) {
@@ -100,6 +100,34 @@ public class World {
                 tiles[gameOverInfoX + i][gameOverInfoY]
                         .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) info2.charAt(i)));
             }
+        }
+
+    }
+
+    public void setOnlineGameWinWorld() {
+        String info1 = " YOU WIN ";
+        for (int i = gameOverInfoX - 1; i <= gameOverInfoX + 9; i++) {
+            for (int j = gameOverInfoY - 1; j < gameOverInfoY + 2; j++) {
+                tiles[i][j].setThing(new ScreenInfo(this, new Color(0, 0, 0), 0));
+            }
+        }
+        for (int i = 0; i < info1.length(); ++i) {
+            tiles[gameOverInfoX + i][gameOverInfoY]
+                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) info1.charAt(i)));
+        }
+
+    }
+
+    public void setOnlineGameLostWorld() {
+        String info1 = " YOU LOST ";
+        for (int i = gameOverInfoX - 1; i <= gameOverInfoX + 9; i++) {
+            for (int j = gameOverInfoY - 1; j < gameOverInfoY + 2; j++) {
+                tiles[i][j].setThing(new ScreenInfo(this, new Color(0, 0, 0), 0));
+            }
+        }
+        for (int i = 0; i < info1.length(); ++i) {
+            tiles[gameOverInfoX + i][gameOverInfoY]
+                    .setThing(new ScreenInfo(this, new Color(255, 255, 255), (int) info1.charAt(i)));
         }
 
     }

@@ -32,7 +32,7 @@ public class Server {
 	private Map map;
 	private Client serverOwner;
 	private InetSocketAddress listenAddress;
-	private final int PORT = 9093;
+	private int port;
 	private boolean isRunning = false;
 	private SocketAddress serverOwnerSocketAddress = null;
 
@@ -50,7 +50,8 @@ public class Server {
 	ByteBuffer writeBuffer = ByteBuffer.allocate(1024);
 
 	public Server(int port, World world, Map map) {
-		listenAddress = new InetSocketAddress("localhost", PORT); // 只能是本地
+		this.port = port;
+		listenAddress = new InetSocketAddress("localhost", port); // 只能是本地
 		this.world = world;
 		this.map = map;
 		this.cannonballList = new CannonballList(1, 600, map, world);
@@ -85,7 +86,7 @@ public class Server {
 		serverChannel.socket().bind(listenAddress);
 		serverChannel.register(this.selector, SelectionKey.OP_ACCEPT);
 
-		System.out.println("Server started on port >> " + PORT);
+		System.out.println("Server started on port >> " + port);
 		isRunning = true;
 		Runnable serverRunnable = new Runnable() {
 			@Override
@@ -172,14 +173,15 @@ public class Server {
 		byte[] data = new byte[numRead];
 		System.arraycopy(readBuffer.array(), 0, data, 0, numRead);
 		String inputLine = new String(data);
-		// System.out.println("Got: "+ inputLine);
-
-		// 读完再写回去
-		handleInputFromClient(key, inputLine);
+		
+		String[]inputLineInfo = inputLine.split("<>"); //可能读取到不止一条信息，需要分隔符分割
+		for(String s:inputLineInfo){
+			handleInputFromClient(key, s);
+		}
 	}
 
 	private void handleInputFromClient(SelectionKey key, String s) {
-		System.out.println("server:handling:" + s);
+		// System.out.println("server:handling:" + s);
 		String[] infoFromClient = s.split(" ");
 		if (infoFromClient.length == 0) {
 			return;
@@ -240,6 +242,7 @@ public class Server {
 					// broadcast the requester to other players
 					n = new NetInfo("setThing", "player", i.id, i.pos, (int) i.player.getGlyph(), i.color);
 					broadcastToAllClient(n.toString(), getSocketAddress(key));
+					System.out.println(playerNum);
 				}
 			}
 				;
@@ -269,7 +272,7 @@ public class Server {
 	}
 
 	private void write(SelectionKey key, String s) {
-		System.out.println("server:write to client " + key.toString() + " with info:" + s);
+		// System.out.println("server:write to client " + key.toString() + " with info:" + s);
 		SocketChannel channel = (SocketChannel) key.channel();
 		writeBuffer.clear();
 		writeBuffer.put(s.getBytes());
@@ -325,38 +328,21 @@ public class Server {
 		broadcastToAllClient(ni.toString(), serverOwnerSocketAddress);
 	}
 
-	public void gameOver() {
+	public void gameOver(int winnerId) {
 		this.gaming = false;
-		NetInfo ni = new NetInfo("gameOver");
+		NetInfo ni = new NetInfo("gameOver",winnerId);
 		broadcastToAllClient(ni.toString(), null);
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try{
-					Thread.sleep(2000);
+					Thread.sleep(5000);
 				}
 				catch(Exception e){
 					e.printStackTrace();
 				}
 				NetInfo ni = new NetInfo("resetGame");
 				broadcastToAllClient(ni.toString(), null);
-				// for(PlayerInfo pi:playerSourceList){
-				// 	if(pi.isAsssign){
-				// 		for(SelectionKey key:selector.keys()){
-				// 			if(getSocketAddress(key) == pi.playerAddress){
-				// 				ni = new NetInfo("admitToJoin", pi.id, pi.pos, pi.color);
-				// 				write(key, ni.toString());
-				// 				for(PlayerInfo pi_:playerSourceList){
-				// 					if(pi_.id != pi.id && pi_.isAsssign){
-				// 						ni = new NetInfo("setThing", "player", pi_.id, pi_.pos, (int) pi_.player.getGlyph(),pi_.color);
-				// 						write(key, ni.toString());
-				// 					}
-				// 				}
-				// 				break;
-				// 			}
-				// 		}
-				// 	}
-				// }
 			}
 		}).start();
 	}

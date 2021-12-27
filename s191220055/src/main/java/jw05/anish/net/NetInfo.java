@@ -100,18 +100,20 @@ public class NetInfo {
                         
             };break;
             case "addScore":
-            case "playerLeave":{
+            case "playerLeave":
+            case "gameOver":{
                 line = this.actionType + ' ' +
                         String.valueOf(id);
             };break;
             case "playerJoin":
+            case "refuseToJoin":
             case "startGame":
             case "startGameRequest":
-            case "gameOver":
             case "resetGame":{
                 line = String.valueOf(actionType);
             };break;
         }
+        line += "<>";// 分隔符
         return line;
     }
 }

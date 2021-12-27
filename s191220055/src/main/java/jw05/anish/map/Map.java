@@ -191,7 +191,7 @@ public class Map {
                     } else { // 多人模式
                         if (creatureList.size() == 1 && server != null) {
                             // world.setWorldState(9);
-                            server.gameOver();
+                            server.gameOver(creatureList.get(0).getId());
                         }
 
                     }
@@ -283,7 +283,7 @@ public class Map {
                     else{ //多人模式
                         if (creatureList.size() == 1 && server != null) {
                             // world.setWorldState(9);
-                            server.gameOver();
+                            server.gameOver(creatureList.get(0).getId());
                         }
                     }
                 }

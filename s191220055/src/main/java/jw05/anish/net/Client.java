@@ -13,6 +13,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import jw05.anish.algorithm.Tuple;
 import jw05.anish.calabashbros.Cannonball;
@@ -69,28 +71,46 @@ public class Client {
 
     private void establishConnection() {
 
-        try {
-            // 建立连接
-            serverAddress = new InetSocketAddress(serverIp, serverPort);
-            client = SocketChannel.open(serverAddress);
-            System.out.println("Successfully connect to server");
+        serverAddress = new InetSocketAddress(serverIp, serverPort);
+        try{
+            client = SocketChannel.open();
+            client.connect(serverAddress);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try{
+                        Thread.sleep(3000);
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                    }
+                    if(joinInGame == false){
+                        System.out.println("fail to connect to:" + serverAddress.toString()+" ,maybe server is full right now");
+                        System.exit(-1);
+                    }
+
+                }
+            },"check if connect successfully").start();
             connect = true;
-            // 监听服务器
-            startReadFromServer();
-        } 
-        catch(UnresolvedAddressException e){
-            System.out.println("fail to connect to:" + serverAddress.toString());
         }
-        catch (ConnectException e) {
+        catch(Exception e){
             System.out.println("fail to connect to:" + serverAddress.toString());
-        } catch (IOException e) {
-            System.out.println("server had been shut down");
+            e.printStackTrace();
+            System.exit(-1);
         }
 
+        try{
+            startReadFromServer();
+        }
+        catch(Exception e){
+            System.out.println("fail to read from server");
+            System.exit(-1);
+        }
+        System.out.println("Successfully connect to server");
     }
 
     public void handleInputFromServer(String[] infoFromServer) {
-        System.out.print("client:handling info from server:");
+        // System.out.print("client:handling info from server:");
         for (String s : infoFromServer) {
             System.out.print(s + " ");
         }
@@ -229,7 +249,14 @@ public class Client {
             case "gameOver":{
                 world.setOtherInfo("STATE:GAME OVER");
                 world.updateOnlineGamingInfo(playerList, player.getId());
-                world.setWorldState(9);
+                int winnerId = Integer.parseInt(infoFromServer[1]);
+                if(winnerId == this.player.getId()){
+                    world.setWorldState(9);
+                }
+                else{
+                    world.setWorldState(10);
+                }
+
             };break;
             case "resetGame":{
                 world.setGamingWorld();
@@ -387,7 +414,7 @@ public class Client {
     }
 
     private void writeToServer(String s) {
-        System.out.println("client:write to server:" + s);
+        // System.out.println("client:write to server:" + s);
         writeBuffer.clear();
         writeBuffer.put(s.getBytes());
         writeBuffer.flip();
@@ -417,11 +444,16 @@ public class Client {
                     Charset charset = Charset.forName("utf-8");
                     String line = charset.decode(readBuffer).toString();
 
-                    String[] lineInfo = line.split(" ");
+                    String[] lineInfo = line.split("<>");
+                    lineInfo = lineInfo[0].split(" ");
                     if (lineInfo[0].equals("admitToJoin")) { // 同意加入对局
                         this.joinInGame = true;
                         this.handleInputFromServer(lineInfo);
                         // System.out.println("successfully");
+                    }
+                    else if (lineInfo[0].equals("refuseToJoin")){ // 不同意加入对局
+                        System.out.println("Refused to join for server is now full");
+                        System.exit(-1);
                     }
                 }
             } catch (Exception e) {
@@ -441,16 +473,19 @@ public class Client {
                         readNum = client.read(readBuffer);
                         if (readNum == -1) {
                             // 读取失败
-                            System.out.println("fail to read");
+                            System.out.println("fail to read from server");
                         } else {
                             // 读取成功，作处理
                             readBuffer.flip();
                             Charset charset = Charset.forName("utf-8");
                             line = charset.decode(readBuffer).toString();
-                            handleInputFromServer(line.split(" "));
+                            String[]lineInfo = line.split("<>");
+                            for(String info:lineInfo){
+                                handleInputFromServer(info.split(" "));
+                            }
                         }
                     } catch (Exception e) {
-                        // e.printStackTrace();
+                        e.printStackTrace();
                         world.setOtherInfo("FAIL TO CONNECT TO SERVER");
                         System.out.println("fail to connect to:"+serverAddress.toString());
                         world.updateOnlineGamingInfo(playerList, player.getId());

@@ -49,7 +49,7 @@ public class WorldScreen implements Screen {
     private String demoFile = null;
 
     //网络相关
-    private final int port = 9093;// //写死
+    private int port;
     private Client client= null;
     private Server server;
 
@@ -105,14 +105,7 @@ public class WorldScreen implements Screen {
                 s = s.toLowerCase();
             }
         }
-        // 是否为在线游戏
-        for(int i = 0;i < args.length;++i){
-            if(args[i].equals("-online") && i != args.length - 1){ // 在线模式
-                this.isOnline = true;
-                this.ip = args[i + 1];
-                break;
-            }
-        }//是否录制
+        //是否录制
         for(String temp:args){
             if(temp.equals("-record")){
                 this.isRecord = true;
@@ -127,9 +120,32 @@ public class WorldScreen implements Screen {
                 break;
             }
         }
+
+        // 是否为客户端
         for(int i = 0;i < args.length;++i){
-            if(args[i].equals("-server")){ 
+            if(args[i].equals("-client")){ // 在线模式
+                if(i >= args.length - 2){
+                    System.out.println("lack of argument:server ip,server port");
+                    System.exit(-1);
+                }
+                this.isOnline = true;
+                clientOrServer = false;
+                this.ip = args[i + 1];
+                this.port = Integer.parseInt(args[i + 2]);
+                break;
+            }
+        }
+        //是否为服务器端
+        for(int i = 0;i < args.length;++i){
+            if(args[i].equals("-server") && this.ip == null){ 
+                System.out.println(args.length);
+                if(i == args.length - 1){
+                    System.out.println("lack of argument:port");
+                    System.exit(-1);
+                }
+                this.isOnline = true;
                 this.clientOrServer = true;
+                this.port = Integer.parseInt(args[i + 1]);
                 break;
             }
         }
@@ -247,10 +263,21 @@ public class WorldScreen implements Screen {
     }
 
     @Override
-    public void gameOverScreen() {
-        world.setGameOverWorld();
+    public void standAloneGameOverScreen() {
+        world.setStandAloneGameOverWorld();
     }
 
+    @Override
+    public void onlineGameWinScreen() {
+        world.setOnlineGameWinWorld();
+        
+    }
+
+    @Override
+    public void onlineGameLostScreen() {
+        // TODO Auto-generated method stub
+        world.setOnlineGameLostWorld();
+    }
     @Override
     public void demoScreen() {
         world.setWorldState(4);
