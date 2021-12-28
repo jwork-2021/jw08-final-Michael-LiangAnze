@@ -197,8 +197,6 @@ public class Map {
                     }
                 }
             } else if (type.equals("player")) {// 该物体为玩家，判断玩家移动的目标位置是否有奖励，有则移动并获奖
-                // System.out.println("moving a blocked polayer");
-                // if (map[destPos.first][destPos.second] == 99) { // 是奖励
                 if (world.get(destPos.first, destPos.second).getType().equals("reward")) {// 是奖励
                     // 首先清空位置
                     map[destPos.first][destPos.second] = 0;

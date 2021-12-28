@@ -111,10 +111,10 @@ public class Client {
 
     public void handleInputFromServer(String[] infoFromServer) {
         // System.out.print("client:handling info from server:");
-        for (String s : infoFromServer) {
-            System.out.print(s + " ");
-        }
-        System.out.print("\n");
+        // for (String s : infoFromServer) {
+        //     System.out.print(s + " ");
+        // }
+        // System.out.print("\n");
 
         if (!isServerOwner) { // 看不到服务器
             switch (infoFromServer[0]) {
@@ -240,7 +240,6 @@ public class Client {
             };break;
             case "startGame": {
                 world.setWorldState(8);
-                // System.out.println(world.getWorldState());
                 world.setOtherInfo("STATE:GAMING");
                 world.updateOnlineGamingInfo(playerList, player.getId());
             }
@@ -293,18 +292,33 @@ public class Client {
     }
 
     public void handleKeyEvent(KeyEvent key) {
-        // System.out.println("sending key:"+key.getKeyCode());
-        // System.out.println(1);
-        // System.out.println(isServerOwner);
-        // System.out.println(key.getKeyCode() == KeyEvent.VK_ENTER);
         switch (world.getWorldState()) {
             case 6:
             case 7: {
                 if (isServerOwner) {
                     switch (key.getKeyCode()) {
                         case KeyEvent.VK_ENTER: {
-                            world.setWorldState(8);
-                            writeToServer("startGameRequest");
+                            if(this.creatureList.size() > 1){
+                                world.setWorldState(8);
+                                writeToServer("startGameRequest");
+                            }
+                            else{
+                                world.setOtherInfo("CAN NOT START GAME WITH 1 PLAYER");
+                                world.updateOnlineGamingInfo(playerList, player.getId());
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try{
+                                            Thread.sleep(1000);
+                                        }
+                                        catch(Exception e){
+                                            e.printStackTrace();
+                                        }
+                                        world.setOtherInfo("PRESS ENTER TO START GAME");
+                                        world.updateOnlineGamingInfo(playerList, player.getId());
+                                    }
+                                }).start();
+                            }
                         }
                             ;
                             break;
@@ -314,7 +328,6 @@ public class Client {
                 ;
                 break;
             case 8: {// clinet
-                
                 NetInfo n;
                 switch (key.getKeyCode()) {
                     case KeyEvent.VK_UP:

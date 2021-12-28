@@ -23,6 +23,7 @@ import jw05.anish.algorithm.Tuple;
 import jw05.anish.calabashbros.CannonballList;
 import jw05.anish.calabashbros.Creature;
 import jw05.anish.calabashbros.Player;
+import jw05.anish.calabashbros.SworksMan;
 import jw05.anish.calabashbros.World;
 import java.awt.Color;
 
@@ -57,13 +58,13 @@ public class Server {
 		this.cannonballList = new CannonballList(1, 600, map, world);
 		cannonballList.setServer(this);
 		playerSourceList.add(new PlayerInfo(new Player(Color.red, 0, 1, 8, world, map, null), id,
-				new Tuple<Integer, Integer>(3, 17), Color.red,null));
+				new Tuple<Integer, Integer>(8, 8), Color.red, null));
 		playerSourceList.add(new PlayerInfo(new Player(Color.green, 0, 1, 8, world, map, null), id,
-				new Tuple<Integer, Integer>(4, 17), Color.green,null));
+				new Tuple<Integer, Integer>(11, 27), Color.green, null));
 		playerSourceList.add(new PlayerInfo(new Player(Color.yellow, 0, 1, 8, world, map, null), id,
-				new Tuple<Integer, Integer>(5, 17), Color.yellow,null));
+				new Tuple<Integer, Integer>(29, 27), Color.yellow, null));
 		playerSourceList.add(new PlayerInfo(new Player(Color.blue, 0, 1, 8, world, map, null), id,
-				new Tuple<Integer, Integer>(6, 17), Color.blue,null));
+				new Tuple<Integer, Integer>(31, 4), Color.blue, null));
 
 		try {
 			startServer();
@@ -148,13 +149,13 @@ public class Server {
 		try {
 			numRead = channel.read(readBuffer);
 		} catch (SocketException e) {
-			System.out.println("server:player from:"+getSocketAddress(key)+" left server");
-			for(PlayerInfo pi:playerSourceList){
-				if(pi.playerAddress == getSocketAddress(key)){
+			System.out.println("server:player from:" + getSocketAddress(key) + " left server");
+			for (PlayerInfo pi : playerSourceList) {
+				if (pi.playerAddress == getSocketAddress(key)) {
 					pi.isAsssign = false;
 					pi.playerAddress = null;
 					this.playerNum--;
-					NetInfo ni = new NetInfo("playerLeave",pi.id);
+					NetInfo ni = new NetInfo("playerLeave", pi.id);
 					broadcastToAllClient(ni.toString(), getSocketAddress(key));
 					break;
 				}
@@ -173,9 +174,9 @@ public class Server {
 		byte[] data = new byte[numRead];
 		System.arraycopy(readBuffer.array(), 0, data, 0, numRead);
 		String inputLine = new String(data);
-		
-		String[]inputLineInfo = inputLine.split("<>"); //可能读取到不止一条信息，需要分隔符分割
-		for(String s:inputLineInfo){
+
+		String[] inputLineInfo = inputLine.split("<>"); // 可能读取到不止一条信息，需要分隔符分割
+		for (String s : inputLineInfo) {
 			handleInputFromClient(key, s);
 		}
 	}
@@ -216,8 +217,7 @@ public class Server {
 						Integer.parseInt(beginPosInfo[1]));
 				int directionInfo = Integer.parseInt(infoFromClient[2]);
 				int ownerId = Integer.parseInt(infoFromClient[3]);
-				// System.out.println(ownerId);
-				cannonballList.addCannonball(beginPos, directionInfo,ownerId);
+				cannonballList.addCannonball(beginPos, directionInfo, ownerId);
 			}
 				;
 				break;
@@ -242,20 +242,13 @@ public class Server {
 					// broadcast the requester to other players
 					n = new NetInfo("setThing", "player", i.id, i.pos, (int) i.player.getGlyph(), i.color);
 					broadcastToAllClient(n.toString(), getSocketAddress(key));
-					System.out.println(playerNum);
 				}
-			}
-				;
-				break;
-			case "startGame": {
-
 			}
 				;
 				break;
 			case "startGameRequest": {
 				// only owner can send this message
 				this.serverOwnerSocketAddress = getSocketAddress(key); // 记录下这一个地址
-				// System.out.println("got request");
 				world.setWorldState(8);
 				new Thread(this.cannonballList, "cannonballListThread").start();
 				gaming = true;
@@ -272,7 +265,8 @@ public class Server {
 	}
 
 	private void write(SelectionKey key, String s) {
-		// System.out.println("server:write to client " + key.toString() + " with info:" + s);
+		// System.out.println("server:write to client " + key.toString() + " with info:"
+		// + s);
 		SocketChannel channel = (SocketChannel) key.channel();
 		writeBuffer.clear();
 		writeBuffer.put(s.getBytes());
@@ -320,7 +314,7 @@ public class Server {
 		return socket.getRemoteSocketAddress();
 	}
 
-	public void launchCannonball(NetInfo ni){
+	public void launchCannonball(NetInfo ni) {
 		broadcastToAllClient(ni.toString(), serverOwnerSocketAddress);
 	}
 
@@ -330,15 +324,14 @@ public class Server {
 
 	public void gameOver(int winnerId) {
 		this.gaming = false;
-		NetInfo ni = new NetInfo("gameOver",winnerId);
+		NetInfo ni = new NetInfo("gameOver", winnerId);
 		broadcastToAllClient(ni.toString(), null);
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				try{
+				try {
 					Thread.sleep(5000);
-				}
-				catch(Exception e){
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				NetInfo ni = new NetInfo("resetGame");
@@ -347,8 +340,8 @@ public class Server {
 		}).start();
 	}
 
-	public void addPlayerScore(int id){
-		NetInfo ni = new NetInfo("addScore",id);
+	public void addPlayerScore(int id) {
+		NetInfo ni = new NetInfo("addScore", id);
 		broadcastToAllClient(ni.toString(), null);
 	}
 }
