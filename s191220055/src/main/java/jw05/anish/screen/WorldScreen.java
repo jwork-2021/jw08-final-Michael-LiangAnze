@@ -275,7 +275,6 @@ public class WorldScreen implements Screen {
 
     @Override
     public void onlineGameLostScreen() {
-        // TODO Auto-generated method stub
         world.setOnlineGameLostWorld();
     }
     @Override
@@ -290,7 +289,7 @@ public class WorldScreen implements Screen {
     @Override
     public void onlineGameScreen() {
         world.setGamingWorld();
-        loadMapFile(false);
+        loadMapFile(isRecord);
     }
     @Override
     public int getScreenState() {

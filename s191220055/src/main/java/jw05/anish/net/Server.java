@@ -59,7 +59,7 @@ public class Server {
 		cannonballList.setServer(this);
 		playerSourceList.add(new PlayerInfo(new Player(Color.red, 0, 1, 8, world, map, null), id,
 				new Tuple<Integer, Integer>(8, 8), Color.red, null));
-		playerSourceList.add(new PlayerInfo(new Player(Color.green, 0, 1, 8, world, map, null), id,
+		playerSourceList.add(new PlayerInfo(new Player(new Color(120,120,0), 0, 1, 8, world, map, null), id,
 				new Tuple<Integer, Integer>(11, 27), Color.green, null));
 		playerSourceList.add(new PlayerInfo(new Player(Color.yellow, 0, 1, 8, world, map, null), id,
 				new Tuple<Integer, Integer>(29, 27), Color.yellow, null));

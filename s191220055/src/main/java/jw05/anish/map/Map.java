@@ -29,7 +29,7 @@ public class Map {
     private ArrayList<Creature> creatureList;
     World world;
     int idCount = 0;
-    MapUpdateRecorder recoreder = null;
+    MapUpdateRecorder recorder = null;
     Server server = null;
 
     public Map(World world, boolean isRecord) {
@@ -38,7 +38,7 @@ public class Map {
         lock = new ReentrantLock(); // 可重入锁，防止冲突
         this.world = world;// 每次一修改地图的状态，马上对world修改，防止出现问题
         if (isRecord) {
-            recoreder = new MapUpdateRecorder();
+            recorder = new MapUpdateRecorder();
         }
     }
 
@@ -132,8 +132,8 @@ public class Map {
         lock.lock();
         Thing t = world.get(beginPos.first, beginPos.second);
         String type = t.getType();
-        if (recoreder != null) { // 确定录像
-            recoreder.AddMoveThingInfo(world.get(beginPos.first, beginPos.second).getId(), type, beginPos, destPos, -1);
+        if (recorder != null) { // 确定录像
+            recorder.AddMoveThingInfo(world.get(beginPos.first, beginPos.second).getId(), type, beginPos, destPos, -1);
         }
         if (map[destPos.first][destPos.second] == 0) {// 允许移动
             int temp = map[beginPos.first][beginPos.second];
@@ -185,13 +185,15 @@ public class Map {
                                 isSave = true;
                             }
                         }
-                        if (isSave && recoreder != null) {
-                            recoreder.saveRecord();
+                        if (isSave && recorder != null) {
+                            recorder.saveRecord();
                         }
                     } else { // 多人模式
                         if (creatureList.size() == 1 && server != null) {
-                            // world.setWorldState(9);
                             server.gameOver(creatureList.get(0).getId());
+                            if(recorder != null){
+                                recorder.saveRecord();
+                            }
                         }
 
                     }
@@ -274,14 +276,17 @@ public class Map {
                                 isSave = true;
                             }
                         }
-                        if (isSave && recoreder != null) {
-                            recoreder.saveRecord();
+                        if (isSave && recorder != null) {
+                            recorder.saveRecord();
                         }
                     }
                     else{ //多人模式
                         if (creatureList.size() == 1 && server != null) {
                             // world.setWorldState(9);
                             server.gameOver(creatureList.get(0).getId());
+                            if(recorder != null){
+                                recorder.saveRecord();
+                            }
                         }
                     }
                 }
@@ -303,8 +308,8 @@ public class Map {
         //     idCount++;
         // }
         // 记录信息并输出
-        if (recoreder != null) {
-            recoreder.AddSetThingInfo(-1, t.getType(), pos, null, t.getId(), (int) t.getGlyph(),
+        if (recorder != null) {
+            recorder.AddSetThingInfo(-1, t.getType(), pos, null, t.getId(), (int) t.getGlyph(),
                     t.getColor());
         }
 
@@ -328,8 +333,8 @@ public class Map {
                 break;
             }
         }
-        if (recoreder != null) {
-            recoreder.AddCloseAttackInfo(id); // 添加记录
+        if (recorder != null) {
+            recorder.AddCloseAttackInfo(id); // 添加记录
         }
         if (index != -1) { // 移除一个生物
             creatureList.remove(index);
@@ -343,8 +348,8 @@ public class Map {
             }
             if (remain) { // 没有玩家，保存录像
                 world.setWorldState(3);
-                if (recoreder != null) {
-                    recoreder.saveRecord();
+                if (recorder != null) {
+                    recorder.saveRecord();
                 }
             }
         }
