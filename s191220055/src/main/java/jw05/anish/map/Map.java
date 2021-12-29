@@ -24,7 +24,7 @@ import jw05.asciiPanel.AsciiPanel;
 public class Map {
     private int[][] map;
     private final int mapSize = 40;
-    private String mapFile;
+    // private String mapFile;
     private Lock lock = null;
     private ArrayList<Creature> creatureList;
     World world;
@@ -33,7 +33,7 @@ public class Map {
     Server server = null;
 
     public Map(World world, boolean isRecord) {
-        this.mapFile = (new File("")).getAbsolutePath() + "\\src\\main\\java\\jw05\\anish\\map\\map1.txt";
+        // this.mapFile = (new File("")).getAbsolutePath() + "\\src\\main\\java\\jw05\\anish\\map\\map1.txt";
         this.map = new int[mapSize][mapSize];// 0为可行，1为玩家、炮弹、或者敌人，其余为地图元素
         lock = new ReentrantLock(); // 可重入锁，防止冲突
         this.world = world;// 每次一修改地图的状态，马上对world修改，防止出现问题
@@ -260,7 +260,7 @@ public class Map {
                     // 下面确定游戏状态及录像保存
                     if (world.getWorldState() < 6) {// 单人模式
                         boolean isSave = false; // 游戏结束，保存录像
-                        if (creatureList.size() == 1 && creatureList.get(0).getType().equals("player")) {// 情况一，只剩下玩家一人，此为单机模式胜利条件
+                        if (creatureList.size() == 1 && creatureList.get(0).getType().equals("player")) {// 情况一，只剩下玩家一人，若为单人游戏则游戏结束
                             world.setWorldState(2); // 胜利
                             isSave = true;
                         } else { // 情况二，没有玩家，失败
@@ -282,7 +282,6 @@ public class Map {
                     }
                     else{ //多人模式
                         if (creatureList.size() == 1 && server != null) {
-                            // world.setWorldState(9);
                             server.gameOver(creatureList.get(0).getId());
                             if(recorder != null){
                                 recorder.saveRecord();

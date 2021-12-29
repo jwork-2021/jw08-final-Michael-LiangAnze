@@ -173,22 +173,22 @@ public class WorldScreen implements Screen {
         cannonballList = new CannonballList(1, 300, map, world);
 
         // 创建人物和道具
-        player = new Player(new Color(0, 245, 255), 1, 500, 4, world, map, cannonballList);
+        player = new Player(new Color(0, 245, 255), 1, 500, 6, world, map, cannonballList);
 
-        Shooter shooter1 = new Shooter(1, 100, 1, world, map, player, cannonballList,
+        Shooter shooter1 = new Shooter(1, 100, 2, world, map, player, cannonballList,
         18, 1, 27, 10);
-        Shooter shooter2 = new Shooter(1, 100, 1, world, map, player, cannonballList,
+        Shooter shooter2 = new Shooter(1, 100, 2, world, map, player, cannonballList,
         30, 8, 37, 10);
-        Shooter shooter3 = new Shooter(1, 100, 1, world, map, player, cannonballList,
+        Shooter shooter3 = new Shooter(1, 100, 2, world, map, player, cannonballList,
         27, 18, 37, 21);
 
-        SworksMan sworksMan1 = new SworksMan(1, 150, 8,1, 2, world,
+        SworksMan sworksMan1 = new SworksMan(1, 150, 8,1, 3, world,
         map,player,2,2,17,11);
-        SworksMan sworksMan2 = new SworksMan(1, 150, 8,1, 2, world,
+        SworksMan sworksMan2 = new SworksMan(1, 150, 8,1, 3, world,
         map,player,31,1,38,6);
-        SworksMan sworksMan3 = new SworksMan(1, 150, 9,1, 2, world,
+        SworksMan sworksMan3 = new SworksMan(1, 150, 9,1, 3, world,
         map,player,1,23,16,37);
-        SworksMan sworksMan4 = new SworksMan(1, 150, 8,1, 2, world,
+        SworksMan sworksMan4 = new SworksMan(1, 150, 8,1, 3, world,
         map,player,24,24,36,37);
 
         Reward reward1 = new Reward(new Color(255, 222, 173), 224, world);

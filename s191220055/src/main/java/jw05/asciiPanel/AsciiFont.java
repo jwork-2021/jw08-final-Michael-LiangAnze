@@ -9,16 +9,16 @@ package jw05.asciiPanel;
  */
 public class AsciiFont {
 
-    public static final AsciiFont CP437_8x8 = new AsciiFont("jw05/resources/cp437_8x8.png", 8, 8);
-    public static final AsciiFont CP437_10x10 = new AsciiFont("jw05/resources/cp437_10x10.png", 10, 10);
-    public static final AsciiFont CP437_12x12 = new AsciiFont("jw05/resources/cp437_12x12.png", 12, 12);
-    public static final AsciiFont CP437_16x16 = new AsciiFont("jw05/resources/cp437_16x16.png", 16, 16);
-    public static final AsciiFont CP437_9x16 = new AsciiFont("jw05/resources/cp437_9x16.png", 9, 16);
-    public static final AsciiFont DRAKE_10x10 = new AsciiFont("jw05/resources/drake_10x10.png", 10, 10);
-    public static final AsciiFont TAFFER_10x10 = new AsciiFont("jw05/resources/taffer_10x10.png", 10, 10);
-    public static final AsciiFont QBICFEET_10x10 = new AsciiFont("jw05/resources/qbicfeet_10x10.png", 10, 10);
-    public static final AsciiFont TALRYTH_15_15 = new AsciiFont("jw05/resources/talryth_square_15x15.png", 15, 15);
-    public static final AsciiFont Guybrush_square_16x16 = new AsciiFont("jw05/resources/Guybrush_square_16x16.png", 16, 16);
+    public static final AsciiFont CP437_8x8 = new AsciiFont("resources/cp437_8x8.png", 8, 8);
+    public static final AsciiFont CP437_10x10 = new AsciiFont("resources/cp437_10x10.png", 10, 10);
+    public static final AsciiFont CP437_12x12 = new AsciiFont("resources/cp437_12x12.png", 12, 12);
+    public static final AsciiFont CP437_16x16 = new AsciiFont("resources/cp437_16x16.png", 16, 16);
+    public static final AsciiFont CP437_9x16 = new AsciiFont("resources/cp437_9x16.png", 9, 16);
+    public static final AsciiFont DRAKE_10x10 = new AsciiFont("resources/drake_10x10.png", 10, 10);
+    public static final AsciiFont TAFFER_10x10 = new AsciiFont("resources/taffer_10x10.png", 10, 10);
+    public static final AsciiFont QBICFEET_10x10 = new AsciiFont("resources/qbicfeet_10x10.png", 10, 10);
+    public static final AsciiFont TALRYTH_15_15 = new AsciiFont("resources/talryth_square_15x15.png", 15, 15);
+    public static final AsciiFont Guybrush_square_16x16 = new AsciiFont("resources/Guybrush_square_16x16.png", 16, 16);
 
     private String fontFilename;
 

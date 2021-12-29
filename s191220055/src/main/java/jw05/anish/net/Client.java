@@ -151,7 +151,7 @@ public class Client {
                         Integer.parseInt(colorInfo[2]));
                 switch (itemType) {
                     case "player": {
-                        Player tempPlayer = new Player(tempColor, 0, 100, 8, world, map, null);
+                        Player tempPlayer = new Player(tempColor, 0, 100, 6, world, map, null);
                         tempPlayer.setId(tempId);
                         map.setThing(pos, 1, tempPlayer);
                         creatureList.add(tempPlayer);
@@ -192,7 +192,7 @@ public class Client {
                 playerPos = new Tuple<Integer, Integer>(Integer.parseInt(posInfo[0]), Integer.parseInt(posInfo[1]));
                 playerColor = new Color(Integer.parseInt(colorInfo[0]), Integer.parseInt(colorInfo[1]),
                         Integer.parseInt(colorInfo[2]));
-                player = new Player(playerColor, 0, 1, 8, world, map, null);
+                player = new Player(playerColor, 0, 1, 6, world, map, null);
                 int id = Integer.parseInt(infoFromServer[1]);
                 joinInGame = true;
                 map.setThing(playerPos, 1, player);
@@ -277,8 +277,7 @@ public class Client {
                     if(!creatureList.contains(((Creature)p))){
                         creatureList.add(p);
                     }
-                    // for(Creature)
-                    p.setInfo(8, 0);
+                    p.setInfo(6, 0);
                 }
                 if(!isServerOwner){
                     world.setOtherInfo("STATE:WAITING TO START...");

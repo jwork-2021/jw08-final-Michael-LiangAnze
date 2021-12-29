@@ -36,6 +36,7 @@ public class MapUpdateRecorder {
 
     public void playDemo(String demoFile, Map map, World world) {
         ArrayList<Creature> creatureList = new ArrayList<Creature>();
+        ArrayList<Player> playerList = new ArrayList<Player>();
         map.setCreatureList(creatureList);
         Runnable demoRunnable = new Runnable() {
             @Override
@@ -66,15 +67,17 @@ public class MapUpdateRecorder {
                                 // 创建物品
                                 switch (lineInfo[2]) {
                                     case "player": {
-                                        Player player = new Player(color, 0, 100, 4, world, map, null);
+                                        Player player = new Player(color, 0, 100, 6, world, map, null);
                                         player.setId(newId);
                                         creatureList.add(player);
+                                        playerList.add(player);
                                         map.setThing(pos, type, player);
+                                        world.updateOnlineGamingInfo(playerList, -2);
                                     }
                                         ;
                                         break;
                                     case "sworksMan": {
-                                        SworksMan sworksMan = new SworksMan(0, 100, 0, 0, 2, world, map, null, 0, 0, 0,
+                                        SworksMan sworksMan = new SworksMan(0, 100, 0, 0, 3, world, map, null, 0, 0, 0,
                                                 0);
                                         sworksMan.setId(newId);
                                         creatureList.add(sworksMan);
@@ -83,7 +86,7 @@ public class MapUpdateRecorder {
                                         ;
                                         break;
                                     case "shooter": {
-                                        Shooter shooter = new Shooter(0, 100, 1, world, map, null, null, 0, 0, 0, 0);
+                                        Shooter shooter = new Shooter(0, 100, 2, world, map, null, null, 0, 0, 0, 0);
                                         shooter.setId(newId);
                                         creatureList.add(shooter);
                                         map.setThing(pos, type, shooter);
@@ -101,10 +104,13 @@ public class MapUpdateRecorder {
                                         Cannonball cannonball = new Cannonball(0, 0, world);
                                         cannonball.setId(newId);
                                         map.setThing(pos, type, cannonball);
+                                        if(world.get(pos.first, pos.second).getType().equals("player")){
+                                            world.updateOnlineGamingInfo(playerList, -2);
+                                        }   
                                     }
                                         ;
                                         break;
-                                }
+                                }       
                             }
                                 ;
                                 break;
@@ -116,8 +122,14 @@ public class MapUpdateRecorder {
                                         Integer.parseInt(beginPosInfo[0]), Integer.parseInt(beginPosInfo[1]));
                                 Tuple<Integer, Integer> destPos = new Tuple<Integer, Integer>(
                                         Integer.parseInt(destPosInfo[0]), Integer.parseInt(destPosInfo[1]));
+
+                                // get type
+                                String type = world.get(destPos.first, destPos.second).getType();
                                 // move thing
                                 map.moveThing(beginPos, destPos);
+                                if(type.equals("player")){
+                                    world.updateOnlineGamingInfo(playerList, -2);
+                                }
                             }
                                 ;
                                 break;
@@ -132,11 +144,12 @@ public class MapUpdateRecorder {
                                         break;
                                     }
                                 }
+                                world.updateOnlineGamingInfo(playerList, -2);
                             }
                                 ;
                                 break;
                         }
-                        Thread.sleep(66);// 10 fps
+                        Thread.sleep(100);
                     }
                     reader.close();
                     System.out.println("finish replaying demo");
@@ -173,12 +186,12 @@ public class MapUpdateRecorder {
         lock.unlock();
     }
 
-    public void AddLaunchAttackInfo(int id,int direction){
+    public void AddLaunchAttackInfo(int id, int direction) {
         lock.lock();
         infolist.add(new MapUpdateInfo(id, direction, "launch"));
         lock.unlock();
     }
-    
+
     public void saveRecord() {
         try {
             BufferedWriter writer;

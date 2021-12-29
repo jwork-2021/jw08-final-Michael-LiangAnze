@@ -57,13 +57,13 @@ public class Server {
 		this.map = map;
 		this.cannonballList = new CannonballList(1, 600, map, world);
 		cannonballList.setServer(this);
-		playerSourceList.add(new PlayerInfo(new Player(Color.red, 0, 1, 8, world, map, null), id,
+		playerSourceList.add(new PlayerInfo(new Player(Color.red, 0, 1, 6, world, map, null), id,
 				new Tuple<Integer, Integer>(8, 8), Color.red, null));
-		playerSourceList.add(new PlayerInfo(new Player(new Color(120,120,0), 0, 1, 8, world, map, null), id,
+		playerSourceList.add(new PlayerInfo(new Player(new Color(120,120,0), 0, 1, 6, world, map, null), id,
 				new Tuple<Integer, Integer>(11, 27), Color.green, null));
-		playerSourceList.add(new PlayerInfo(new Player(Color.yellow, 0, 1, 8, world, map, null), id,
+		playerSourceList.add(new PlayerInfo(new Player(Color.yellow, 0, 1, 6, world, map, null), id,
 				new Tuple<Integer, Integer>(29, 27), Color.yellow, null));
-		playerSourceList.add(new PlayerInfo(new Player(Color.blue, 0, 1, 8, world, map, null), id,
+		playerSourceList.add(new PlayerInfo(new Player(Color.blue, 0, 1, 6, world, map, null), id,
 				new Tuple<Integer, Integer>(31, 4), Color.blue, null));
 
 		try {
