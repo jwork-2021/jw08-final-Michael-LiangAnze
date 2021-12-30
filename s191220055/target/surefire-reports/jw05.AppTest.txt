@@ -1,9 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: jw05.AppTest
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.059 sec <<< FAILURE!
-testCannonball(jw05.AppTest)  Time elapsed: 0.003 sec  <<< ERROR!
-java.lang.NullPointerException: Cannot invoke "jw05.anish.calabashbros.Tile.setPos(jw05.anish.algorithm.Tuple)" because "this.tile" is null
-	at jw05.anish.calabashbros.Thing.setPos(Thing.java:60)
-	at jw05.AppTest.testCannonball(AppTest.java:43)
-
+Tests run: 17, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.08 sec

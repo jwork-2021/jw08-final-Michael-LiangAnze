@@ -145,7 +145,7 @@ public class Client {
                 String[] posInfo = infoFromServer[3].split(",");
                 Tuple<Integer, Integer> pos = new Tuple<Integer, Integer>(Integer.parseInt(posInfo[0]),
                         Integer.parseInt(posInfo[1]));
-                int tempGlyph = Integer.parseInt(infoFromServer[4]);
+                // int tempGlyph = Integer.parseInt(infoFromServer[4]);
                 String[] colorInfo = infoFromServer[5].split(",");
                 Color tempColor = new Color(Integer.parseInt(colorInfo[0]), Integer.parseInt(colorInfo[1]),
                         Integer.parseInt(colorInfo[2]));

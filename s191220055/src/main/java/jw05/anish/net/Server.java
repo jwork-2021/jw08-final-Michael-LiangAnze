@@ -11,19 +11,13 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import jw05.anish.map.Map;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
-
 import jw05.anish.algorithm.Tuple;
 import jw05.anish.calabashbros.CannonballList;
-import jw05.anish.calabashbros.Creature;
 import jw05.anish.calabashbros.Player;
-import jw05.anish.calabashbros.SworksMan;
 import jw05.anish.calabashbros.World;
 import java.awt.Color;
 

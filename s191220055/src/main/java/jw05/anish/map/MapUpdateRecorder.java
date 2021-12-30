@@ -17,7 +17,6 @@ import jw05.anish.calabashbros.Player;
 import jw05.anish.calabashbros.Reward;
 import jw05.anish.calabashbros.Shooter;
 import jw05.anish.calabashbros.SworksMan;
-import jw05.anish.calabashbros.Thing;
 import jw05.anish.calabashbros.World;
 
 import java.awt.Color;
