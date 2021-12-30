@@ -148,7 +148,7 @@ public class MapUpdateRecorder {
                                 ;
                                 break;
                         }
-                        Thread.sleep(100);
+                        Thread.sleep(66);
                     }
                     reader.close();
                     System.out.println("finish replaying demo");
