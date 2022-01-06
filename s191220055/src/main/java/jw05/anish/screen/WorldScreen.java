@@ -2,18 +2,9 @@ package jw05.anish.screen;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.swing.text.html.HTMLDocument.BlockElement;
 
 import jw05.anish.calabashbros.Player;
 import jw05.anish.calabashbros.Shooter;
@@ -22,7 +13,6 @@ import jw05.anish.algorithm.Tuple;
 import jw05.anish.calabashbros.Reward;
 import jw05.anish.calabashbros.CannonballList;
 import jw05.anish.calabashbros.Creature;
-import jw05.anish.calabashbros.MapItem;
 import jw05.anish.calabashbros.World;
 import jw05.asciiPanel.AsciiPanel;
 import jw05.anish.map.Map;
